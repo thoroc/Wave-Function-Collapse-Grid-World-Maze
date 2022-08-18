@@ -47,6 +47,7 @@ class Grid:
             # fig.tight_layout()
             plt.show()
         elif tiles == "unite":
+            plt.axis('off')
             plt.imshow(self.Map)
             plt.show()
         else:
