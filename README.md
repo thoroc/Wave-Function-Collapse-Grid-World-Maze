@@ -14,3 +14,4 @@ PS: Yellow lines are path and Purple are walls
 
 ![Example of a Maze #3](Results/Figure_3.png)
 
+![Example of a Maze #4](Results/Figure_4.png)
