@@ -1,34 +1,16 @@
-# Wave-Function-Collapse
+# Wave-Function-Collapse for Grid World Maze
 
-Straight out of quantum mechanics, Wave Function Collapse is an algorithm for procedural generation of images. In this video (recorded over 3 live streams) I attempt the tiled model and explore a variety of solutions to the algorithm in JavaScript with p5.js.
+The WFC was changed for a certain application. It creates a map for 2D world, the main result is a 2D binary matrix representing the walls and paths. It could be used in the environment to set the game. The repository with a game where this generator will be used - https://github.com/Nik-Kras/ToMnet-N
 
-![GIF animation of WFC algorithm](gifs/wfc.gif)
+For details of each class and method please look at `Wave_Function_Collapse.ipynb`
 
-- [Wave Function Collapse video](https://thecodingtrain.com/challenges/171-wave-function-collapse)
-- [Wave Function Collapse algorithm source](https://github.com/mxgmn/WaveFunctionCollapse)
-- [Wave Function Collapse Processing forum discussion](https://discourse.processing.org/t/wave-collapse-function-algorithm-in-processing/12983)
+To look at the use examples - `main.py` or `Examples.py`
 
-## Plan
+PS: Yellow lines are path and Purple are walls
 
-### Completed
+![Example of a Maze #1](Results/Figure_1.png)
 
-- [x] Implementation of Tile Model (see: https://youtu.be/rI_y2GAlQFM)
+![Example of a Maze #2](Results/Figure_2.png)
 
-### Corrections
+![Example of a Maze #3](Results/Figure_3.png)
 
-- [ ] Additional Rules for tiles 4 and 5
-- [ ] Explain how Computed Property Names could have been used (see: https://github.com/CodingTrain/Wave-Function-Collapse/issues/35)
-
-### Next Steps and Refactoring
-
-- [ ] Filter out redundant tiles
-- [ ] Recursive entropy reduction
-- [ ] Shannon entropy
-
-### Future work
-
-- [ ] Overlapping model
-
-## Related work
-
-- [WFC using local storage](https://editor.p5js.org/kfahn/full/iNUF-Lgdf) by @kfahn22.
