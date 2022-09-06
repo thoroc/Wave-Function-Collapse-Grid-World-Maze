@@ -1,5 +1,5 @@
 import numpy as np
-from tile import TilesClass
+from src.tile import Tiles
 
 
 class Cell:
@@ -45,7 +45,7 @@ class Cell:
             # print("All options: ", self.options)
             # print("Random selection: ", newState)
 
-        temporalTileObj = TilesClass()
+        temporalTileObj = Tiles()
 
         if newState in temporalTileObj.ListOfTiles:
             self.state = newState

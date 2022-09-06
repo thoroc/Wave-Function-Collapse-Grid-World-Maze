@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tile import Tiles
-from cell import Cell
+from src.tile import Tiles
+from src.cell import Cell
 
 
 class Grid:

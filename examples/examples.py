@@ -1,10 +1,9 @@
-from Grid import *
-import numpy as np
 import matplotlib.pyplot as plt
+from src.grid import Grid
 
 # Example of drawing an empty board
 Game = Grid(9)
-Game.DrawBoard(includeEntropy = True)
+Game.DrawBoard(includeEntropy=True)
 
 # Example of creating the full game board
 Game = Grid(9)
