@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Tile import *
-from Cell import *
+from tile import Tiles
+from cell import Cell
+
 
 class Grid:
     """
@@ -10,7 +11,7 @@ class Grid:
 
     def __init__(self, size):
         self.size = size
-        self.Tiles = TilesClass()
+        self.Tiles = Tiles()
         self.Cells = np.ndarray(shape=(size, size), dtype=Cell)
         self.CollapsedCells = 0
         self.Map = np.zeros(shape=(3 * size, 3 * size))
@@ -29,7 +30,6 @@ class Grid:
             elif isinstance(title, int):
                 fig.suptitle(str(title) + "%", fontsize=16)
 
-
             for rowCell in self.Cells:
                 for cell in rowCell:
                     cellState = cell.getState()
@@ -38,7 +38,12 @@ class Grid:
                     # ax.set_title(cellState)
 
                     if includeEntropy:
-                        plt.text(0.7, 0.7, str(cell.getEntropy()), fontsize=12, color='w')
+                        plt.text(
+                            0.7,
+                            0.7,
+                            str(cell.getEntropy()),
+                            fontsize=12, color='w'
+                        )
 
                     plt.axis('off')
                     plt.imshow(self.Tiles.getTile(cellState))
@@ -131,7 +136,7 @@ class Grid:
         self.Cells[row][column].setState(method="random")
 
     """
-    Collapse one cell with the lowest entropy and changes available options 
+    Collapse one cell with the lowest entropy and changes available options
     of neighbours (makes update according to assigned state)
     """
 

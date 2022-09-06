@@ -1,5 +1,6 @@
 import numpy as np
-from Tile import *
+from tile import TilesClass
+
 
 class Cell:
     """

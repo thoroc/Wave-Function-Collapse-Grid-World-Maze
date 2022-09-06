@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class TilesClass:
+
+class Tiles:
     """
     tiles - stores all possible states of cells representing patterns of walls
             for Grid World
@@ -11,7 +12,6 @@ class TilesClass:
     """
 
     def __init__(self):
-
         """
         List of all available tiles where Tile_0 ... Tile_6 are defined tiles
         and Tile_10 is a tile of undefined cells (which are not collapsed)
