@@ -1,11 +1,13 @@
-from Grid import *
-import numpy as np
 import matplotlib.pyplot as plt
+from src.grid import Grid
+from src.lib import tileset
 
-Game = Grid(9)
-Map = Game.GenerateMap()
+# tileset()
 
-plt.title("Generated and Exported Map")
+grid = Grid(9)
+map = grid.generate_map()
+
+plt.title("Generated and Exported map")
 plt.axis('off')
-plt.imshow(Map)
+plt.imshow(map)
 plt.show()
