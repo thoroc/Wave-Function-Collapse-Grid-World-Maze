@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from src.grid import Grid
-from src.tileset import tileset
+from src.lib import tileset
 
 # tileset()
 
