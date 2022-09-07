@@ -224,3 +224,20 @@ class TestCell:
 
         # Assert
         logger.assert_called()
+
+    @pytest.mark.repeat(3)
+    def test_update_state_wrong_state(self, faker, mocker, tileset_tile_list):
+        # Arrange
+        cell = Cell()
+        logger = mocker.patch("loguru.logger.debug")
+        mocker.patch(
+            "src.cell.Tileset.tile_list",
+            new_callable=mocker.PropertyMock,
+            return_value=tileset_tile_list
+        )
+
+        # Act
+        cell.update_state(new_state=faker.word())
+
+        # Assert
+        logger.assert_called()
