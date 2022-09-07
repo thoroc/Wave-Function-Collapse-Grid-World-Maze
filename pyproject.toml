@@ -35,6 +35,7 @@ pytest-clarity = "^1.0.1"
 pytest-cov = "^3.0.0"
 pytest-mock = "^3.8.2"
 pytest-repeat = "^0.9.1"
+vulture = "^2.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

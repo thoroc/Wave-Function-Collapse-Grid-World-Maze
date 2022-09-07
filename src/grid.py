@@ -206,8 +206,8 @@ class Grid:
 
                 for width in range(3):
                     for height in range(3):
-                        row = row * 3 + width
-                        col = column * 3 + height
-                        self._map[row][col] = cell_2d[width][height]
+                        pos_x = row * 3 + width
+                        pos_y = column * 3 + height
+                        self._map[pos_x][pos_y] = cell_2d[width][height]
 
         return self._map

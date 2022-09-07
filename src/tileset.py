@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from loguru import logger
 
 
 class Tileset:
@@ -172,33 +170,5 @@ class Tileset:
         return self._tiles
 
     @property
-    def connections(self):
-        return self._connections
-
-    @property
     def connection_rules(self):
-        return self.connection_rules
-
-    def draw_tiles(self):
-        """
-        Draws all Tileset and shows probability for each of them
-        """
-
-        counter = 1
-        fig = plt.figure(figsize=(8, 8))
-        fig.suptitle("Tileset", fontsize=16)
-
-        for _, tile in self.tiles.items():
-            ax = fig.add_subplot(3, 4, counter)
-            ax.set_title("Tile_" + str(counter - 1))
-            # ax.set_title("Prbability: " + str(self.tile_probability[counter-1]) + "%")
-            plt.imshow(tile)
-            counter = counter + 1
-        plt.show()
-
-    def get_tile(self, index):
-        if index in self.tile_list:
-            return self.tiles[index]
-        else:
-            logger.debug("Error! Wrong index was given. Expexted index: Tile_x where \
-      x is 0, 1, ..., 6")
+        return self._connection_rules

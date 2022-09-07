@@ -16,6 +16,15 @@ PS: Yellow lines are path and Purple are walls
 
 ![Example of a Maze #4](output/Figure_4.png)
 
+
+## virtual env
+
+Use `poetry`.
+
 ## Testing
 
 `pytest . -x -vvv -s -o log_cli=true`
+
+## Check code
+
+`python -m vulture main.py src`
