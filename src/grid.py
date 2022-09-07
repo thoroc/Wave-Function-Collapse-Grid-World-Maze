@@ -8,6 +8,12 @@ from src.cell import Cell
 class Grid:
     """Class Grid."""
 
+    _size: int
+    _tiles: Tileset
+    _cells: np.ndarray
+    _collapsed_cells: int
+    _map: np.ndarray
+
     def __init__(self, size: int):
         self._size = size
         self._tiles = Tileset()
@@ -86,6 +92,7 @@ class Grid:
         logger.debug("Cell with lowest entropy: {}", lowest_entropy_index)
         logger.debug("Is the cell collapsed? {}",
                      self._cells[lowest_entropy_index[0]][lowest_entropy_index[1]].collapsed)
+
         return lowest_entropy_index
 
     def update_cell_options(self, cell_index: tuple, available_options: list):
