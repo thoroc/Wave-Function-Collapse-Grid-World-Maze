@@ -2,16 +2,16 @@ import matplotlib.pyplot as plt
 from src.grid import Grid
 
 # Example of drawing an empty board
-Game = Grid(9)
-Game.DrawBoard(includeEntropy=True)
+grid = Grid(9)
+grid.draw_board(include_entropy=True)
 
-# Example of creating the full game board
-Game = Grid(9)
-Map = Game.GenerateMap(drawStages=True)
-Game.DrawBoard(tiles="unite")
+# Example of creating the full grid board
+grid = Grid(9)
+map = grid.generate_map(draw_stages=True)
+grid.draw_board(tiles="unite")
 
-plt.title("Generated and Exported Map")
-plt.imshow(Map)
+plt.title("Generated and Exported map")
+plt.imshow(map)
 plt.show()
 
-print(Map)
+print(map)

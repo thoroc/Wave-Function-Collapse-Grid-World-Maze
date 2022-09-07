@@ -10,9 +10,12 @@ class Cell:
     state - shows which state was assigned to the cell (from 0 to 6), where
             10 means the state was not assigned yet
     """
+    _collapsed: bool
+    _state: str
+    _entropy: int
 
     def __init__(self):
-        self.options = [
+        self._options = [
             "Tile_0",
             "Tile_1",
             "Tile_2",
@@ -21,44 +24,51 @@ class Cell:
             "Tile_5",
             "Tile_6"
         ]
-        self.collapsed = False
-        self.state = "Tile_10"
-        self.entropy = len(self.options)
+        self._collapsed = False
+        self._state = "Tile_10"
+        self._entropy = len(self._options)
 
-    def getState(self):
-        return self.state
+    @property
+    def state(self):
+        return self._state
 
-    def getEntropy(self):
-        self.entropy = len(self.options)
-        return self.entropy
+    @property
+    def entropy(self):
+        self._entropy = len(self._options)
+        return self._entropy
 
-    def isCollapsed(self):
-        return self.collapsed
+    @property
+    def collapsed(self):
+        return self._collapsed
 
-    def setState(self, newState='Tile_0', method="direct"):
+    @property
+    def options(self):
+        return self._options
 
-        if self.isCollapsed():
+    def update_state(self, new_state='Tile_0', method="direct"):
+
+        if self._collapsed:
             logger.debug("The cell is already collapsed!")
             return
 
         if method == "random":
-            newState = np.random.choice(self.options)
-            logger.debug("All options: {}", self.options)
-            logger.debug("Random selection: {} ", newState)
+            new_state = np.random.choice(self._options)
+            logger.debug("All options: {}", self._options)
+            logger.debug("Random selection: {} ", new_state)
 
-        temporalTileObj = Tiles()
+        temporal_tile_obj = Tiles()
 
-        if newState in temporalTileObj.ListOfTiles:
-            self.state = newState
-        elif type(newState) == int:
-            if 0 <= newState <= 6:
-                self.state = temporalTileObj.ListOfTiles[newState]
+        if new_state in temporal_tile_obj.list_of_tiles:
+            self._state = new_state
+        elif type(new_state) == int:
+            if 0 <= new_state <= 6:
+                self._state = temporal_tile_obj.list_of_tiles[new_state]
             else:
                 logger.debug("Error. The state index is out of range (0,6)")
         else:
             logger.debug(
                 "Error. Wrong state was given. Neither Tile name, nor Tile index")
 
-        self.options = []
-        self.entropy = 0
-        self.collapsed = True
+        self._options = []
+        self._entropy = 0
+        self._collapsed = True
