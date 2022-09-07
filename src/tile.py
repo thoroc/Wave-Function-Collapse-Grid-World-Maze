@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from loguru import logger
 
 
 class Tiles:
@@ -151,5 +152,5 @@ class Tiles:
         if index in self.ListOfTiles:
             return self.tiles[index]
         else:
-            print("Error! Wrong index was given. Expexted index: Tile_x where \
+            logger.debug("Error! Wrong index was given. Expexted index: Tile_x where \
       x is 0, 1, ..., 6")

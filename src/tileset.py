@@ -1,4 +1,3 @@
-# download from http://www.cr31.co.uk/stagecast/art/edge/wang-2e/0.gif
 from pathlib import Path
 from requests import get
 from loguru import logger

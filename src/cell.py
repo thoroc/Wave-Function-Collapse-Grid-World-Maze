@@ -1,4 +1,5 @@
 import numpy as np
+from loguru import logger
 from src.tile import Tiles
 
 
@@ -37,13 +38,13 @@ class Cell:
     def setState(self, newState='Tile_0', method="direct"):
 
         if self.isCollapsed():
-            print("The cell is already collapsed!")
+            logger.debug("The cell is already collapsed!")
             return
 
         if method == "random":
             newState = np.random.choice(self.options)
-            # print("All options: ", self.options)
-            # print("Random selection: ", newState)
+            logger.debug("All options: {}", self.options)
+            logger.debug("Random selection: {} ", newState)
 
         temporalTileObj = Tiles()
 
@@ -53,9 +54,10 @@ class Cell:
             if 0 <= newState <= 6:
                 self.state = temporalTileObj.ListOfTiles[newState]
             else:
-                print("Error. The state index is out of range (0,6)")
+                logger.debug("Error. The state index is out of range (0,6)")
         else:
-            print("Error. Wrong state was given. Neither Tile name, nor Tile index")
+            logger.debug(
+                "Error. Wrong state was given. Neither Tile name, nor Tile index")
 
         self.options = []
         self.entropy = 0
