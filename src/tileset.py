@@ -5,10 +5,11 @@ class Tileset:
     """
     tiles - stores all possible states of cells representing patterns of walls
             for Grid World
-    title_probability - stores probability for each state to appear. It is a way to
-                        adjust how many walls will be placed and which wall
-                        structure would be prefered
     """
+    _tile_list: list
+    _tiles: dict
+    _connections: dict
+    _connection_rules: dict
 
     def __init__(self):
         """
@@ -27,73 +28,47 @@ class Tileset:
         ]
 
         self._tiles = {
-            "Tile_0": np.array(
-                [
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0]
-                ]
-            ),
-            "Tile_1": np.array(
-                [
-                    [0, 1, 0],
-                    [0, 1, 1],
-                    [0, 1, 0]
-                ]
-            ),
-            "Tile_2": np.array(
-                [
-                    [0, 0, 0],
-                    [1, 1, 1],
-                    [0, 1, 0]
-                ]
-            ),
-            "Tile_3": np.array(
-                [
-                    [0, 1, 0],
-                    [1, 1, 0],
-                    [0, 1, 0]
-                ]
-            ),
-            "Tile_4": np.array(
-                [
-                    [0, 1, 0],
-                    [1, 1, 1],
-                    [0, 0, 0]
-                ]
-            ),
-            "Tile_5": np.array(
-                [
-                    [0, 0, 0],
-                    [1, 1, 1],
-                    [0, 0, 0]
-                ]
-            ),
-            "Tile_6": np.array(
-                [
-                    [0, 1, 0],
-                    [0, 1, 0],
-                    [0, 1, 0]
-                ]
-            ),
-            "Tile_10": np.array(
-                [
-                    [1, 1, 1],
-                    [1, 1, 1],
-                    [1, 1, 1]
-                ]
-            ),
+            "Tile_0": np.array([
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0]
+            ]),
+            "Tile_1": np.array([
+                [0, 1, 0],
+                [0, 1, 1],
+                [0, 1, 0]
+            ]),
+            "Tile_2": np.array([
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ]),
+            "Tile_3": np.array([
+                [0, 1, 0],
+                [1, 1, 0],
+                [0, 1, 0]
+            ]),
+            "Tile_4": np.array([
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]),
+            "Tile_5": np.array([
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]),
+            "Tile_6": np.array([
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+            ]),
+            "Tile_10": np.array([
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1]
+            ]),
         }
-
-        self.tile_probability = [0] * 8
-        self.tile_probability[0] = 26
-        self.tile_probability[1] = 9
-        self.tile_probability[2] = 9
-        self.tile_probability[3] = 9
-        self.tile_probability[4] = 9
-        self.tile_probability[5] = 20
-        self.tile_probability[6] = 20
-        self.tile_probability[7] = 0
 
         """
         The dictionary that stores options for neighbours of each Tile.
