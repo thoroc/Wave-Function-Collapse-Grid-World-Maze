@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 from loguru import logger
@@ -79,21 +80,18 @@ class Grid:
             Cell: the cell found
         """
         lowest_entropy = 7
-        lowest_entropy_index = [0, 0]
-        # previousCellCollapse = self._cells[0][0].isCollapsed()
+        candidate = self._cells[0, 0]
 
-        for row in range(self._size):
-            for column in range(self._size):
-                cell: Cell = self._cells[row][column]
-                if not cell.collapsed and cell.entropy < lowest_entropy:
-                    lowest_entropy = cell.entropy
-                    lowest_entropy_index = [row, column]
+        for cell in self._cells.flat:
 
-        logger.debug("Cell with lowest entropy: {}", lowest_entropy_index)
-        logger.debug("Is the cell collapsed? {}",
-                     self._cells[lowest_entropy_index[0]][lowest_entropy_index[1]].collapsed)
+            if not cell.collapsed and cell.entropy < lowest_entropy:
+                candidate = cell
+                lowest_entropy = cell.entropy
 
-        return lowest_entropy_index
+        # logger.debug("Cell with lowest entropy: {}, {}", row_index, col_index)
+        logger.debug("Is the cell collapsed? {}", cell.collapsed)
+
+        return candidate
 
     def update_cell_options(self, cell_index: tuple, available_options: list):
         """Update cell's options.
@@ -218,3 +216,6 @@ class Grid:
                         self._map[pos_x][pos_y] = cell_2d[width][height]
 
         return self._map
+
+    def __repr__(self) -> str:
+        return f"<src.grid.Grid size={self._size} cells={list(self._cells)}>"

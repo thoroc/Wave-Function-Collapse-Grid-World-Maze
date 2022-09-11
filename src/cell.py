@@ -1,3 +1,4 @@
+from uuid import uuid4
 import numpy as np
 from loguru import logger
 from src.tileset import Tileset
@@ -13,13 +14,16 @@ class Cell:
             10 means the state was not assigned yet
     """
 
+    _id: str
     _collapsed: bool
     _state: str
     _entropy: int
 
-    def __init__(self):
+    def __init__(self, options=None):
         """Class Cell constructor."""
-        self._options = [
+        self._id = uuid4()
+
+        self._options = options if options else [
             "Tile_0",
             "Tile_1",
             "Tile_2",
@@ -31,6 +35,10 @@ class Cell:
         self._collapsed = False
         self._state = "Tile_10"
         self._entropy = len(self._options)
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def state(self):
@@ -53,6 +61,7 @@ class Cell:
         """Options property."""
         return self._options
 
+    @logger.catch()
     def update_state(self, new_state="Tile_0", method="direct"):
         """Update cell's state.
 
@@ -88,3 +97,9 @@ class Cell:
         self._collapsed = True
 
         return self._state
+
+    def __repr__(self) -> str:
+        return f"<{__name__}.{__class__.__name__} id={self._id} collapsed={self._collapsed} state={self._state} entropy={self._entropy}>"
+
+    def __eq__(self, cell: object) -> bool:
+        return self._id == cell.id

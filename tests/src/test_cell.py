@@ -39,11 +39,11 @@ class TestCell:
     @pytest.mark.repeat(3)
     def test_entropy(self, faker):
         # Arrange
-        cell = Cell()
         nb_options = faker.random_digit_not_null()
+        new_options = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell._options = [faker.word() for _ in range(nb_options)]
+        cell = Cell(options=new_options)
 
         # Assert
         assert cell.entropy == nb_options
@@ -63,23 +63,22 @@ class TestCell:
     @pytest.mark.repeat(3)
     def test_options(self, faker):
         # Arrange
-        cell = Cell()
         nb_options = faker.random_digit_not_null()
         new_options = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell._options = new_options
+        cell = Cell(options=new_options)
 
         # Assert
         assert cell.options == new_options
 
-    def test_update_state_default(self, mocker, tileset_tile_list):
+    def test_update_state_default(self, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -133,7 +132,7 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_random(self, mocker, random_option, tileset_tile_list):
+    def test_update_state_random(self, mocker, random_option, complete_tile_list):
         # Arrange
         cell = Cell()
         choice = mocker.patch("numpy.random.choice")
@@ -142,7 +141,7 @@ class TestCell:
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -164,13 +163,13 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_new_state(self, new_state, mocker, tileset_tile_list):
+    def test_update_state_new_state(self, new_state, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -191,13 +190,13 @@ class TestCell:
         (5, "Tile_5"),
         (6, "Tile_6"),
     ])
-    def test_update_state_int_ok(self, state_index, new_state, mocker, tileset_tile_list):
+    def test_update_state_int_ok(self, state_index, new_state, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -209,14 +208,14 @@ class TestCell:
     @pytest.mark.parametrize("state_index", [
         -1, 7
     ])
-    def test_update_state_int_out_of_bound(self, state_index, mocker, tileset_tile_list):
+    def test_update_state_int_out_of_bound(self, state_index, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -226,14 +225,14 @@ class TestCell:
         logger.assert_called()
 
     @pytest.mark.repeat(3)
-    def test_update_state_wrong_state(self, faker, mocker, tileset_tile_list):
+    def test_update_state_wrong_state(self, faker, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
