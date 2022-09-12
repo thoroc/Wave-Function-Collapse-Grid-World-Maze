@@ -18,8 +18,10 @@ class Cell:
     _collapsed: bool
     _state: str
     _entropy: int
+    _row: int
+    _column: int
 
-    def __init__(self, options=None):
+    def __init__(self, options=None, row=None, column=None):
         """Class Cell constructor."""
         self._id = uuid4()
 
@@ -35,6 +37,8 @@ class Cell:
         self._collapsed = False
         self._state = "Tile_10"
         self._entropy = len(self._options)
+        self._row = row
+        self._column = column
 
     @property
     def id(self):
@@ -60,6 +64,16 @@ class Cell:
     def options(self):
         """Options property."""
         return self._options
+
+    @property
+    def row(self):
+        """Row property"""
+        return self._row
+
+    @property
+    def column(self):
+        """Column property"""
+        return self._column
 
     @logger.catch()
     def update_state(self, new_state="Tile_0", method="direct"):

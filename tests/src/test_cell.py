@@ -72,6 +72,30 @@ class TestCell:
         # Assert
         assert cell.options == new_options
 
+    @pytest.mark.repeat(3)
+    def test_row(self, faker):
+        # Arrange
+        row_index = faker.random_digit()
+
+        # Act
+        cell = Cell(row=row_index)
+
+        # Assert
+        assert cell.row == row_index
+        assert cell.column is None
+
+    @pytest.mark.repeat(3)
+    def test_column(self, faker):
+        # Arrange
+        column_index = faker.random_digit()
+
+        # Act
+        cell = Cell(column=column_index)
+
+        # Assert
+        assert cell.row is None
+        assert cell.column == column_index
+
     def test_update_state_default(self, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
