@@ -146,4 +146,9 @@ class Tileset:
 
     @property
     def connection_rules(self):
+        """Connection Rules.
+
+        Returns:
+            dict: connection rules depending on cell state and direction
+        """
         return self._connection_rules
