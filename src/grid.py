@@ -10,21 +10,23 @@ class Grid:
     """Class Grid."""
 
     _size: int
-    _tiles: Tileset
+    _tileset: Tileset
     _cells: np.ndarray
     _collapsed_cells: int
     _map: np.ndarray
 
     def __init__(self, size: int):
         self._size = size
-        self._tiles = Tileset()
+        self._tileset = Tileset()
         self._cells = np.ndarray(shape=(size, size), dtype=Cell)
         self._collapsed_cells = 0
         self._map = np.zeros(shape=(3 * size, 3 * size))
 
-        for row in range(size):
-            for column in range(size):
-                self._cells[row][column] = Cell()
+        for row_index in range(size):
+            for column_index in range(size):
+                self._cells[row_index, column_index] = Cell(
+                    row=row_index, column=column_index
+                )
 
     def draw_board(self, include_entropy=False, tiles="separate", title=""):
         """Draw board.
@@ -59,7 +61,7 @@ class Grid:
                         )
 
                     plt.axis("off")
-                    plt.imshow(self._tiles.tile(cell_state))
+                    plt.imshow(self._tileset.tile(cell_state))
 
                     counter = counter + 1
             # fig.tight_layout()
@@ -73,41 +75,38 @@ class Grid:
         else:
             logger.debug("error. Wrong tiles value was given!")
 
-    def lowest_entropy(self) -> Cell:
+    def _lowest_entropy(self) -> Cell:
         """Returns the cell with the lowest entropy.
 
         Returns:
             Cell: the cell found
         """
-        lowest_entropy = 7
+        _lowest_entropy = 7
         candidate = self._cells[0, 0]
 
         for cell in self._cells.flat:
 
-            if not cell.collapsed and cell.entropy < lowest_entropy:
+            if not cell.collapsed and cell.entropy < _lowest_entropy:
                 candidate = cell
-                lowest_entropy = cell.entropy
-
-        # logger.debug("Cell with lowest entropy: {}, {}", row_index, col_index)
-        logger.debug("Is the cell collapsed? {}", cell.collapsed)
+                _lowest_entropy = cell.entropy
 
         logger.debug(
             "The cell with the lowest entropy: {}", candidate)
 
         return candidate
 
-    def update_cell_options(self, cell_index: tuple, available_options: list):
+    def _update_cell_options(self, row: int, column: int, available_options: list):
         """Update cell's options.
 
         Args:
-            cell_index (tuple): index where to find the cell
+            row (int): row where to find the cell
+            column (int): column where to find the cell
             available_options (list): new list of options for the cell
 
         Return:
             None
         """
-        row, column = cell_index
-        current_cell: Cell = self._cells[row][column]
+        current_cell: Cell = self._cells[row, column]
         logger.debug("Available options: {}", available_options)
         logger.debug("My options: {}", current_cell.options)
 
@@ -126,46 +125,35 @@ class Grid:
         logger.debug("Cell [{}][{}]. My new options: {}",
                      row, column, current_cell.options)
 
-    def update_options_of_others(self, cell_index: tuple):
-        """Update the other cells' options.
+    def _update_neighbours(self, row: int, column: int):
+        """Update the options of the cells' neighbours.
 
         Args:
-            cell_index (tuple): index where to find the cell of which neighbours
-                                should be updated
+            row (int): row where to find the cell
+            column (int): column where to find the cell
         """
-        row, column = cell_index
-        collapsed_cell: Cell = self._cells[row][column]
+        collapsed_cell: Cell = self._cells[row, column]
         cell_state = collapsed_cell.state
 
         # update cell above
         if row > 0:
-            available_options = self._tiles.connection_rules[cell_state]["UP"]
-            self.update_cell_options([row - 1, column], available_options)
+            available_options = self._tileset.connection_rules[cell_state]["UP"]
+            self._update_cell_options(row - 1, column, available_options)
 
         # update cell below
         if row < self._size - 1:
-            available_options = self._tiles.connection_rules[cell_state]["DOWN"]
-            self.update_cell_options([row + 1, column], available_options)
+            available_options = self._tileset.connection_rules[cell_state]["DOWN"]
+            self._update_cell_options(row + 1, column, available_options)
 
         # update cell to the right
         if column < self._size - 1:
-            available_options = self._tiles.connection_rules[cell_state]["RIGHT"]
-            self.update_cell_options([row, column + 1], available_options)
+            available_options = self._tileset.connection_rules[cell_state]["RIGHT"]
+            self._update_cell_options(row, column + 1, available_options)
 
         # update cell to the right
         if column > 0:
-            available_options = self._tiles.connection_rules[cell_state]["LEFT"]
-            self.update_cell_options([row, column - 1], available_options)
-
-    def collapse_cell(self, cell_index: tuple):
-        """Collapse cell at index.
-
-        Args:
-            cell_index (tuple): index where to find the cell
-        """
-        row, column = cell_index
-        current_cell: Cell = self._cells[row][column]
-        current_cell.update_state(method="random")
+            available_options = self._tileset.connection_rules[cell_state]["LEFT"]
+            self._update_cell_options(row, column - 1, available_options)
 
     def update(self):
         """Update grid's cells.
@@ -174,11 +162,11 @@ class Grid:
         of neighbours (makes update according to assigned state).
         """
         # Chose the cell with lowest entropy
-        index = self.lowest_entropy()
+        cell = self._lowest_entropy()
         # Collapse the cell, select one state for it
-        self.collapse_cell(index)
+        cell.update_state(method="random")
         # Propagate entropy to neighbours, change their available options
-        self.update_options_of_others(index)
+        self._update_neighbours(cell.row, cell.column)
         self._collapsed_cells = self._collapsed_cells + 1
 
     def generate_map(self, draw_stages=False):
@@ -210,7 +198,7 @@ class Grid:
             for column in range(self._size):
                 cell = self._cells[row][column]
                 state = cell.state
-                cell_2d = self._tiles.tiles[state]
+                cell_2d = self._tileset.tiles[state]
 
                 for width in range(3):
                     for height in range(3):

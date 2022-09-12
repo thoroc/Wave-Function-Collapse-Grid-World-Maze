@@ -4,17 +4,29 @@ from loguru import logger
 
 from src.grid import Grid
 from src.cell import Cell
+from src.tileset import Tileset
 
 
 class TestGrid:
-    @pytest.mark.skip("not implemented yet.")
-    def test_constructor(self):
+    @pytest.mark.repeat(3)
+    def test_constructor(self, faker):
         # Arrange
+        size = faker.random_digit_not_null()
 
         # Act
+        grid = Grid(size=size)
 
         # Assert
-        assert False
+        assert grid._size == size
+        assert isinstance(grid._tileset, Tileset)
+
+        for cell in grid._cells.flat:
+            assert isinstance(cell, Cell)
+
+        assert grid._collapsed_cells == 0
+
+        for item in grid._map.flat:
+            assert item == 0
 
     @pytest.mark.skip("not implemented yet.")
     def test_draw_board(self):
@@ -26,41 +38,34 @@ class TestGrid:
         assert False
 
     @pytest.mark.repeat(3)
-    def test_lowest_entropy_default(self, faker):
+    def test__lowest_entropy_default(self, faker):
         # Arrange
         grid = Grid(size=faker.random_digit_not_null())
 
-        self.print_grid(grid)
-
         # Act
-        cell = grid.lowest_entropy()
+        cell = grid._lowest_entropy()
 
         # Assert
         assert cell == grid._cells[0][0]
 
     @pytest.mark.repeat(3)
-    def test_lowest_entropy_one_lower(self, faker):
+    def test__lowest_entropy_one_lower(self, faker):
         # Arrange
         elements = [d for d in range(0, 10)]
         row_index = faker.random_choices(elements=tuple(elements), length=1)[0]
         col_index = faker.random_choices(elements=tuple(elements), length=1)[0]
 
         grid = Grid(size=len(elements))
-
-        logger.debug("Grid size: {}x{}", grid._size, grid._size)
-
         grid._cells[row_index, col_index] = Cell(options=["Tile_0"])
 
-        self.print_grid(grid)
-
         # Act
-        cell = grid.lowest_entropy()
+        cell = grid._lowest_entropy()
 
         # Assert
         assert cell == grid._cells[row_index, col_index]
 
     @pytest.mark.skip("not implemented yet.")
-    def test_update_cell_options(self):
+    def test__update_cell_options_cell(self):
         # Arrange
 
         # Act
@@ -69,7 +74,7 @@ class TestGrid:
         assert False
 
     @pytest.mark.skip("not implemented yet.")
-    def test_update_options_of_others(self):
+    def test__update_neighbours_cell_collapsed(self):
         # Arrange
 
         # Act
@@ -78,7 +83,7 @@ class TestGrid:
         assert False
 
     @pytest.mark.skip("not implemented yet.")
-    def test_collapse_cell(self):
+    def test__update_neighbours(self):
         # Arrange
 
         # Act
