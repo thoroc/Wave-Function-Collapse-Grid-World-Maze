@@ -1,6 +1,13 @@
+from random import randint
 import pytest
 
 from src.cell import Cell
+
+
+@pytest.fixture(autouse=True)
+def faker_init(faker):
+    seed = randint(10001, 99999)
+    faker.seed_instance(seed)
 
 
 @pytest.fixture(autouse=True)

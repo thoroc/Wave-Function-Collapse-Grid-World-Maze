@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 from loguru import logger
 
 from src.grid import Grid
@@ -24,13 +25,15 @@ class TestGrid:
         # Assert
         assert False
 
-    def test_lowest_entropy_default(self):
+    @pytest.mark.repeat(3)
+    def test_lowest_entropy_default(self, faker):
         # Arrange
-        grid = Grid(size=2)
+        grid = Grid(size=faker.random_digit_not_null())
+
+        self.print_grid(grid)
 
         # Act
         cell = grid.lowest_entropy()
-        logger.debug(grid)
 
         # Assert
         assert cell == grid._cells[0][0]
@@ -43,7 +46,12 @@ class TestGrid:
         col_index = faker.random_choices(elements=tuple(elements), length=1)[0]
 
         grid = Grid(size=len(elements))
+
+        logger.debug("Grid size: {}x{}", grid._size, grid._size)
+
         grid._cells[row_index, col_index] = Cell(options=["Tile_0"])
+
+        self.print_grid(grid)
 
         # Act
         cell = grid.lowest_entropy()
@@ -95,3 +103,23 @@ class TestGrid:
 
         # Assert
         assert False
+
+    def print_grid(self, grid: Grid):
+        """Debug statement to check entropy for the whole cells group.
+        """
+        entropies = []
+
+        for column_index in range(grid._size):
+            row = []
+
+            for row_index in range(grid._size):
+                curr_cell: Cell = grid._cells[row_index, column_index]
+                row.append(curr_cell.entropy)
+
+            entropies.append(row)
+
+        columns = [f"col_{i}" for i in range(grid._size)]
+        index = [[f"row_{i}" for i in range(grid._size)]]
+        df = pd.DataFrame(entropies, columns=columns, index=index)
+
+        logger.debug("\n{}", df)

@@ -91,6 +91,9 @@ class Grid:
         # logger.debug("Cell with lowest entropy: {}, {}", row_index, col_index)
         logger.debug("Is the cell collapsed? {}", cell.collapsed)
 
+        logger.debug(
+            "The cell with the lowest entropy: {}", candidate)
+
         return candidate
 
     def update_cell_options(self, cell_index: tuple, available_options: list):
