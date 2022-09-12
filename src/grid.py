@@ -95,65 +95,39 @@ class Grid:
 
         return candidate
 
-    def _update_cell_options(self, row: int, column: int, available_options: list):
-        """Update cell's options.
-
-        Args:
-            row (int): row where to find the cell
-            column (int): column where to find the cell
-            available_options (list): new list of options for the cell
-
-        Return:
-            None
-        """
-        current_cell: Cell = self._cells[row, column]
-        logger.debug("Available options: {}", available_options)
-        logger.debug("My options: {}", current_cell.options)
-
-        if current_cell.collapsed:
-            logger.debug("This cell is already collapsed")
-            return
-
-        copy_options = current_cell.options.copy()
-        for option in copy_options:
-            if option in available_options:
-                continue
-
-            logger.debug("I deleted an option: {}", option)
-            current_cell.options.remove(option)
-
-        logger.debug("Cell [{}][{}]. My new options: {}",
-                     row, column, current_cell.options)
-
-    def _update_neighbours(self, row: int, column: int):
+    def _update_neighbours(self, collapsed_cell: Cell):
         """Update the options of the cells' neighbours.
 
         Args:
-            row (int): row where to find the cell
-            column (int): column where to find the cell
+            cell (Cell): the cell to update
         """
-        collapsed_cell: Cell = self._cells[row, column]
+        row = collapsed_cell.row
+        column = collapsed_cell.column
         cell_state = collapsed_cell.state
 
         # update cell above
         if row > 0:
             available_options = self._tileset.connection_rules[cell_state]["UP"]
-            self._update_cell_options(row - 1, column, available_options)
+            neighbour: Cell = self._cells[row - 1, column]
+            neighbour.update_options(available_options)
 
         # update cell below
         if row < self._size - 1:
             available_options = self._tileset.connection_rules[cell_state]["DOWN"]
-            self._update_cell_options(row + 1, column, available_options)
+            neighbour: Cell = self._cells[row + 1, column]
+            neighbour.update_options(available_options)
 
         # update cell to the right
         if column < self._size - 1:
             available_options = self._tileset.connection_rules[cell_state]["RIGHT"]
-            self._update_cell_options(row, column + 1, available_options)
+            neighbour: Cell = self._cells[row, column + 1]
+            neighbour.update_options(available_options)
 
         # update cell to the right
         if column > 0:
             available_options = self._tileset.connection_rules[cell_state]["LEFT"]
-            self._update_cell_options(row, column - 1, available_options)
+            neighbour: Cell = self._cells[row, column - 1]
+            neighbour.update_options(available_options)
 
     def update(self):
         """Update grid's cells.

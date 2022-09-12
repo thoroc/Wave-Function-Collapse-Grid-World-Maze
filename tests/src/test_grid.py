@@ -64,23 +64,41 @@ class TestGrid:
         # Assert
         assert cell == grid._cells[row_index, col_index]
 
-    @pytest.mark.skip("not implemented yet.")
-    def test__update_cell_options_cell(self):
+    def test__update_cell_options_cell(self, faker):
         # Arrange
+        elements = [d for d in range(0, 10)]
+        row_index = faker.random_choices(elements=tuple(elements), length=1)[0]
+        col_index = faker.random_choices(elements=tuple(elements), length=1)[0]
+
+        grid = Grid(size=len(elements))
+        # options = [f"option_{i}" for i in range(9)]
+        # other_options = [f"option_{i}" for i in range(3)]
 
         # Act
+        # intersection = list(set(options).intersection(set(other_options)))
+
+        # logger.debug(
+        #     "\nIntersection:     {}",
+        #     list(set(options) & set(other_options))
+        # )
+        # logger.debug(
+        #     "Difference [A-B]: {}",
+        #     list(set(options) - set(other_options))
+        # )
+        # logger.debug(
+        #     "Difference [B-A]: {}",
+        #     list(set(other_options) - set(options))
+        # )
+        # logger.debug(
+        #     "Union:            {}",
+        #     list(set(options) | set(other_options))
+        # )
+
+        # logger.debug(options)
+        # logger.debug(other_options)
 
         # Assert
-        assert False
-
-    @pytest.mark.skip("not implemented yet.")
-    def test__update_neighbours_cell_collapsed(self):
-        # Arrange
-
-        # Act
-
-        # Assert
-        assert False
+        # assert len(intersection) == 4
 
     @pytest.mark.skip("not implemented yet.")
     def test__update_neighbours(self):

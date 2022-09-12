@@ -264,3 +264,36 @@ class TestCell:
 
         # Assert
         logger.assert_called()
+
+    def test_update_options_collapsed(self, faker):
+        # Arrange
+        cell = Cell()
+        cell._collapsed = True
+        options = [faker.word()
+                   for _ in range(faker.random_digit_not_null())]
+
+        # Act
+        current_options = cell._options
+        new_options = cell.update_options(remove_options=options)
+
+        # Assert
+        assert new_options == current_options
+
+    @pytest.mark.parametrize("remove_options, expected_options", [
+        (["Tile_0"], ["Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
+        (["Tile_1"], ["Tile_0", "Tile_2", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
+        (["Tile_2"], ["Tile_0", "Tile_1", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
+        (["Tile_3"], ["Tile_0", "Tile_1", "Tile_2", "Tile_4", "Tile_5", "Tile_6"]),
+        (["Tile_4"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_5", "Tile_6"]),
+        (["Tile_5"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_6"]),
+        (["Tile_6"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_5"])
+    ])
+    def test_update_options_valid(self, faker, remove_options, expected_options):
+        # Arrange
+        cell = Cell()
+
+        # Act
+        result = cell.update_options(remove_options=remove_options)
+
+        # Assert
+        assert result == expected_options

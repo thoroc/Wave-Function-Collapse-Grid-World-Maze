@@ -82,6 +82,9 @@ class Cell:
         Args:
             new_state (str, optional): state. Defaults to "Tile_0".
             method (str, optional): method. Defaults to "direct".
+
+        Returns:
+            str: the cell's state
         """
         if self._collapsed:
             logger.debug("The cell is already collapsed!")
@@ -111,6 +114,34 @@ class Cell:
         self._collapsed = True
 
         return self._state
+
+    def update_options(self, remove_options: list):
+        """Update cell's options.
+
+        Args:
+            remove_options (list): list of options to remove for the cell
+
+        Return:
+            list: the current options for the cell
+        """
+        if self._collapsed:
+            logger.debug(
+                "This cell [{}] is already collapsed. Skipping",
+                self
+            )
+            return self._options
+
+        curr_options = self._options
+        self._options = sorted(list(
+            set(curr_options) - set(remove_options)
+        ))
+
+        logger.debug(
+            "Cell [{}]. My new options: {}",
+            self, self._options
+        )
+
+        return self._options
 
     def __repr__(self) -> str:
         return f"<{__name__}.{__class__.__name__} id={self._id} collapsed={self._collapsed} state={self._state} entropy={self._entropy}>"
