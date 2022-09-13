@@ -38,6 +38,7 @@ pytest-cov = "^3.0.0"
 pytest-mock = "^3.8.2"
 pytest-repeat = "^0.9.1"
 vulture = "^2.5"
+bandit = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -70,3 +71,12 @@ addopts = "-s -vvv -x -o log_cli=true --cov"
 testpaths = [
     ".",
 ]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".github", ".venv", ".vscode", "examples", "output"]
+
+[tool.vulture]
+make_whitelist = true
+min_confidence = 80
+paths = ["main.py", "src"]
+sort_by_size = true
