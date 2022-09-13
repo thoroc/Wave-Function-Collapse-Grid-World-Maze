@@ -103,19 +103,20 @@ class TestGrid:
         # Assert
         assert False
 
-    def print_grid(self, grid: Grid):
+    def print_grid(self, grid: Grid, attribute: str = "entropy"):
         """Debug statement to check entropy for the whole cells group.
         """
         data = []
 
         for column_index in range(grid._size):
-            row = []
+            curr_row = []
 
-            for row in range(grid._size):
-                curr_cell: Cell = grid._cells[row, column_index]
-                row.append(curr_cell.entropy)
+            for row_index in range(grid._size):
+                curr_cell: Cell = grid._cells[row_index, column_index]
+                curr_row.append(getattr(curr_cell, attribute))
+                # curr_row.append(curr_cell.entropy)
 
-            data.append(row)
+            data.append(curr_row)
 
         columns = [f"col_{i}" for i in range(grid._size)]
         index = [[f"row_{i}" for i in range(grid._size)]]
