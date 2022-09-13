@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "njpwerner.autodocstring",
+    "ryanluker.vscode-coverage-gutters",
+    "oderwat.indent-rainbow",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "azeemba.python-ast-preview",
+    "tushortz.python-extended-snippets",
+    "donjayamanne.python-extension-pack",
+    "kevinrose.vsc-python-indent",
+    "njqdev.vscode-python-typehint",
+    "littlefoxteam.vscode-python-test-adapter",
+    "johnpapa.vscode-peacock"
+  ]
+}
