@@ -115,35 +115,35 @@ class Grid:
 
         # update cell to the left
         if column > lower_bound:
-            neighbour = self._update_neighbour(
+            neighbour = self._update_neighbouring_cell(
                 row=row, column=column - 1, state=state, direction="LEFT"
             )
             updated_cells["LEFT"] = neighbour
 
         # update cell above
         if row > lower_bound:
-            neighbour = self._update_neighbour(
+            neighbour = self._update_neighbouring_cell(
                 row=row - 1, column=column, state=state, direction="UP"
             )
             updated_cells["UP"] = neighbour
 
         # update cell to the right
         if column < upper_bound:
-            neighbour = self._update_neighbour(
+            neighbour = self._update_neighbouring_cell(
                 row=row, column=column + 1, state=state, direction="RIGHT"
             )
             updated_cells["RIGHT"] = neighbour
 
         # update cell below
         if row < upper_bound:
-            neighbour = self._update_neighbour(
+            neighbour = self._update_neighbouring_cell(
                 row=row + 1, column=column, state=state, direction="DOWN"
             )
             updated_cells["DOWN"] = neighbour
 
         return updated_cells
 
-    def _update_neighbour(self, row: int, column: int, state: str, direction: str) -> Cell:
+    def _update_neighbouring_cell(self, row: int, column: int, state: str, direction: str) -> Cell:
         """Update a single neighbouring cell.
 
         Args:
