@@ -108,32 +108,34 @@ class Grid:
         row = collapsed_cell.row
         column = collapsed_cell.column
         state = collapsed_cell.state
+        lower_bound = 0
+        upper_bound = self._size - 1
 
         updated_cells = {}
 
         # update cell to the left
-        if column > 0:
+        if column > lower_bound:
             neighbour = self._update_neighbour(
                 row=row, column=column - 1, state=state, direction="LEFT"
             )
             updated_cells["LEFT"] = neighbour
 
         # update cell above
-        if row > 0:
+        if row > lower_bound:
             neighbour = self._update_neighbour(
                 row=row - 1, column=column, state=state, direction="UP"
             )
             updated_cells["UP"] = neighbour
 
         # update cell to the right
-        if column < self._size - 1:
+        if column < upper_bound:
             neighbour = self._update_neighbour(
                 row=row, column=column + 1, state=state, direction="RIGHT"
             )
             updated_cells["RIGHT"] = neighbour
 
         # update cell below
-        if row < self._size - 1:
+        if row < upper_bound:
             neighbour = self._update_neighbour(
                 row=row + 1, column=column, state=state, direction="DOWN"
             )

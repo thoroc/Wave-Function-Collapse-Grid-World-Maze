@@ -115,7 +115,7 @@ class TestGrid:
         for key, value in neighbours.items():
             expected[key] = grid._cells[value[0], value[1]]
 
-            # Act
+        # Act
         result = grid._update_neighbours(collapsed_cell=collapsed_cell)
 
         logger.debug("actual:   {}", result)
@@ -124,6 +124,15 @@ class TestGrid:
         # Assert
         assert len(result) == len(expected)
         assert result == expected
+
+    @pytest.mark.skip("not implemented yet.")
+    def test__update_neighbours_out_of_range(self):
+        # Arrange
+
+        # Act
+
+        # Assert
+        assert False
 
     @pytest.mark.skip("not implemented yet.")
     def test_update(self):
