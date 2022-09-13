@@ -138,7 +138,7 @@ class Cell:
         return self._options
 
     def __repr__(self) -> str:
-        return f"<{__name__}.{__class__.__name__} id={self._id} collapsed={self._collapsed} state={self._state} entropy={self._entropy}>"
+        return f"<{__name__}.{__class__.__name__} id={self._id} row={self._row} column={self._column} collapsed={self._collapsed} state={self._state} entropy={self._entropy}>"
 
     def __eq__(self, cell: object) -> bool:
         return self._id == cell.id
