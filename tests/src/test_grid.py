@@ -135,7 +135,7 @@ class TestGrid:
         assert False
 
     @pytest.mark.repeat(3)
-    def test__update_neighbouring_cell(self, mocker, faker):
+    def test__update_neighbouring_cell(self, mocker, faker, directions):
         # Arrange
         elements = [d for d in range(0, 10)]
         row = faker.random_choices(elements=tuple(elements), length=1)[0]
@@ -155,7 +155,7 @@ class TestGrid:
             return_value=available_options
         )
         direction = faker.random_choices(
-            elements=("LEFT", "UP", "RIGHT", "DOWN"), length=1)[0]
+            elements=tuple(directions), length=1)[0]
         # Act
         actual = grid._update_neighbouring_cell(
             row, column, faker.word(), direction)

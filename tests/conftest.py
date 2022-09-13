@@ -25,5 +25,10 @@ def complete_tile_list():
 
 
 @pytest.fixture(autouse=True)
+def directions():
+    return ["LEFT", "UP", "RIGHT", "DOWN"]
+
+
+@pytest.fixture(autouse=True)
 def cell_with_low_entropy():
     return Cell(options=["Tile_0"])
