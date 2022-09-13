@@ -151,6 +151,17 @@ class Tileset:
         """Connection Rules property."""
         return self._connection_rules
 
+    def get_tile(self, state: str) -> list:
+        """Get tile pattern by state.
+
+        Args:
+            state (str): Cell state
+
+        Returns:
+            list: pattern
+        """
+        return self._tiles[state]
+
     def get_connection_rules(self, state: str, direction: str) -> list:
         """Connection Rules.
 

@@ -188,12 +188,21 @@ class TestGrid:
         # Assert
         assert grid._collapsed_cells == collapsed_cells + 1
 
-    def test__populate_map(self):
+    def test__populate_map(self, mocker):
         # Arrange
         size = 3
         grid = Grid(size=size)
-        expected = np.ndarray(shape=(size * 3, size * 3), dtype=int)
-        expected.fill(1)
+        expected = np.ndarray(shape=(size * 3, size * 3), dtype=float)
+        expected.fill(0.)
+
+        mocker.patch(
+            "src.tileset.Tileset.get_tile",
+            return_value=[
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0]
+            ]
+        )
 
         # Act
         map = grid._populate_map()

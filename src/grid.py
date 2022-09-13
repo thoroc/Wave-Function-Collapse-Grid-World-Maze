@@ -185,7 +185,7 @@ class Grid:
         for row in range(self._size):
             for column in range(self._size):
                 cell: Cell = self._cells[row][column]
-                cell_2d = self._tileset.tiles[cell.state]
+                cell_2d = self._tileset.get_tile(cell.state)
 
                 for width in range(3):
                     for height in range(3):

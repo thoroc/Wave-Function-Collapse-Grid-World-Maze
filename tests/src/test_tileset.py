@@ -81,7 +81,75 @@ class TestTileset:
             [1, 1, 1]
         ])).all()
 
-    @pytest.mark.parametrize("state, direction, expected_options", [
+    @pytest.mark.parametrize("state, pattern", [
+        (
+            "Tile_0", np.array([
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0]
+            ])
+        ),
+        (
+            "Tile_1", np.array([
+                [0, 1, 0],
+                [0, 1, 1],
+                [0, 1, 0]
+            ])
+        ),
+        (
+            "Tile_2", np.array([
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ])
+        ),
+        (
+            "Tile_3", np.array([
+                [0, 1, 0],
+                [1, 1, 0],
+                [0, 1, 0]
+            ])
+        ),
+        (
+            "Tile_4", np.array([
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ])
+        ),
+        (
+            "Tile_5", np.array([
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ])
+        ),
+        (
+            "Tile_6", np.array([
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+            ])
+        ),
+        (
+            "Tile_10", np.array([
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1]
+            ])
+        ),
+    ])
+    def test_get_tile(self, state, pattern):
+        # Arrange
+        tileset = Tileset()
+
+        # Act
+        actual = tileset.get_tile(state)
+
+        # Assert
+        assert (actual == pattern).all()
+
+    @ pytest.mark.parametrize("state, direction, expected_options", [
         ("Tile_0", "UP", ["Tile_0", "Tile_4", "Tile_5"]),
         ("Tile_0", "RIGHT", ["Tile_0", "Tile_1", "Tile_6"]),
         ("Tile_0", "DOWN", ["Tile_0", "Tile_2", "Tile_5"]),
