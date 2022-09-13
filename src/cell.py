@@ -115,7 +115,7 @@ class Cell:
 
         return self._state
 
-    def update_options(self, remove_options: list):
+    def update_options(self, remove_options: list) -> list:
         """Update cell's options.
 
         Args:
@@ -133,7 +133,7 @@ class Cell:
             set(curr_options) - set(remove_options)
         ))
 
-        logger.debug("Cell [{}]. New options: {}", self, self._options)
+        # logger.debug("Cell [{}]. New options: {}", self, self._options)
 
         return self._options
 

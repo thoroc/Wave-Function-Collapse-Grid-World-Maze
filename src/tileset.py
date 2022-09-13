@@ -151,7 +151,7 @@ class Tileset:
         """Connection Rules property."""
         return self._connection_rules
 
-    def get_connection_rules(self, state: str, direction: str):
+    def get_connection_rules(self, state: str, direction: str) -> list:
         """Connection Rules.
 
         Returns:

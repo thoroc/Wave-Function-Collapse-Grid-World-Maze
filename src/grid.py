@@ -153,12 +153,13 @@ class Grid:
         Returns:
             Cell: the neighbouring cell
         """
-        logger.debug(f"Checking cell {direction.lower()}.")
+        # logger.debug(f"Checking cell {direction.lower()}.")
         available_options = self._tileset.get_connection_rules(
-            state=state, direction=direction)
+            state=state, direction=direction
+        )
         neighbour: Cell = self._cells[row, column]
 
-        logger.debug("Available Options: {}", available_options)
+        # logger.debug("Available Options: {}", available_options)
         neighbour.update_options(available_options)
 
         return neighbour
