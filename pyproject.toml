@@ -66,7 +66,7 @@ branch_coverage_min = 50
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-s -vvv -x -o log_cli=true --cov"
 testpaths = [
     ".",
 ]
