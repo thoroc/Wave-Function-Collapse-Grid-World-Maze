@@ -1,5 +1,6 @@
 import pytest
 import pandas as pd
+import numpy as np
 from loguru import logger
 
 from src.grid import Grid
@@ -164,7 +165,7 @@ class TestGrid:
         assert actual == grid._cells[row, column]
 
     @pytest.mark.repeat(3)
-    def test_update(self, mocker, faker):
+    def test__update(self, mocker, faker):
         # Arrange
         grid = Grid(size=3)
         collapsed_cells = faker.random_digit()
@@ -182,10 +183,25 @@ class TestGrid:
         mocker.patch("src.grid.Grid._update_neighbours")
 
         # Act
-        grid.update()
+        grid._update()
 
         # Assert
         assert grid._collapsed_cells == collapsed_cells + 1
+
+    def test__populate_map(self):
+        # Arrange
+        size = 3
+        grid = Grid(size=size)
+        expected = np.ndarray(shape=(size * 3, size * 3), dtype=int)
+        expected.fill(1)
+
+        # Act
+        map = grid._populate_map()
+
+        self.print_grid(grid)
+
+        # Assert
+        assert (map == expected).all()
 
     @pytest.mark.skip("not implemented yet.")
     def test_generate_map(self):

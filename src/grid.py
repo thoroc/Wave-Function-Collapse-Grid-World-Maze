@@ -165,7 +165,7 @@ class Grid:
 
         return neighbour
 
-    def update(self):
+    def _update(self) -> None:
         """Update grid's cells.
 
         Collapse one cell with the lowest entropy and changes available options
@@ -179,7 +179,23 @@ class Grid:
         self._update_neighbours(cell)
         self._collapsed_cells = self._collapsed_cells + 1
 
-    def generate_map(self, draw_stages=False):
+    def _populate_map(self) -> np.ndarray:
+        map = np.ndarray(shape=(3 * self._size, 3 * self._size))
+
+        for row in range(self._size):
+            for column in range(self._size):
+                cell: Cell = self._cells[row][column]
+                cell_2d = self._tileset.tiles[cell.state]
+
+                for width in range(3):
+                    for height in range(3):
+                        pos_x = row * 3 + width
+                        pos_y = column * 3 + height
+                        map[pos_x][pos_y] = cell_2d[width][height]
+
+        return map
+
+    def generate_map(self, draw_stages=False) -> np.ndarray:
         """Generate map.
 
         Args:
@@ -192,7 +208,7 @@ class Grid:
         percent_threshold = 10
 
         while self._collapsed_cells < max_number_collapsed_cells:
-            self.update()
+            self._update()
             percent = 100 * self._collapsed_cells / max_number_collapsed_cells
 
             if percent > percent_threshold or percent == 100:
@@ -204,17 +220,7 @@ class Grid:
                 percent_threshold = percent_threshold + 10
 
         # Fill 2D array to save the whole map
-        for row in range(self._size):
-            for column in range(self._size):
-                cell = self._cells[row][column]
-                state = cell.state
-                cell_2d = self._tileset.tiles[state]
-
-                for width in range(3):
-                    for height in range(3):
-                        pos_x = row * 3 + width
-                        pos_y = column * 3 + height
-                        self._map[pos_x][pos_y] = cell_2d[width][height]
+        self._map = self._populate_map()
 
         return self._map
 
