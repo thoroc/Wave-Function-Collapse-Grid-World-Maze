@@ -125,10 +125,7 @@ class Cell:
             list: the current options for the cell
         """
         if self._collapsed:
-            logger.debug(
-                "This cell [{}] is already collapsed. Skipping",
-                self
-            )
+            logger.debug("This cell [{}] is already collapsed. Skipping", self)
             return self._options
 
         curr_options = self._options
@@ -136,10 +133,7 @@ class Cell:
             set(curr_options) - set(remove_options)
         ))
 
-        logger.debug(
-            "Cell [{}]. My new options: {}",
-            self, self._options
-        )
+        logger.debug("Cell [{}]. New options: {}", self, self._options)
 
         return self._options
 

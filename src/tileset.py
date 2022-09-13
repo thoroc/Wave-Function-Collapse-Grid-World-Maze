@@ -138,17 +138,23 @@ class Tileset:
 
     @property
     def tile_list(self):
+        """Tile list property."""
         return self._tile_list
 
     @property
     def tiles(self):
+        """Tiles property."""
         return self._tiles
 
     @property
     def connection_rules(self):
+        """Connection Rules property."""
+        return self._connection_rules
+
+    def get_connection_rules(self, state: str, direction: str):
         """Connection Rules.
 
         Returns:
-            dict: connection rules depending on cell state and direction
+            list: connection rules depending on cell state and direction
         """
-        return self._connection_rules
+        return self._connection_rules[state][direction]

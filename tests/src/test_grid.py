@@ -52,62 +52,38 @@ class TestGrid:
     def test__lowest_entropy_one_lower(self, faker):
         # Arrange
         elements = [d for d in range(0, 10)]
-        row_index = faker.random_choices(elements=tuple(elements), length=1)[0]
-        col_index = faker.random_choices(elements=tuple(elements), length=1)[0]
+        row = faker.random_choices(elements=tuple(elements), length=1)[0]
+        column = faker.random_choices(elements=tuple(elements), length=1)[0]
 
         grid = Grid(size=len(elements))
-        grid._cells[row_index, col_index] = Cell(options=["Tile_0"])
+        grid._cells[row, column] = Cell(options=["Tile_0"])
 
         # Act
         cell = grid._lowest_entropy()
 
         # Assert
-        assert cell == grid._cells[row_index, col_index]
+        assert cell == grid._cells[row, column]
 
-    def test__update_cell_options_cell(self, faker):
+    @pytest.mark.parametrize("row, column, neibours", [
+        (0, 0, 2), (0, 1, 3), (0, 2, 2),
+        (1, 0, 3), (1, 1, 4), (1, 2, 3),
+        (2, 0, 2), (2, 1, 3), (2, 2, 2)
+    ])
+    def test__update_neighbours(self, mocker, row, column, neibours):
         # Arrange
-        elements = [d for d in range(0, 10)]
-        row_index = faker.random_choices(elements=tuple(elements), length=1)[0]
-        col_index = faker.random_choices(elements=tuple(elements), length=1)[0]
+        grid = Grid(size=3)
+        collapsed_cell: Cell = grid._cells[row, column]
 
-        grid = Grid(size=len(elements))
-        # options = [f"option_{i}" for i in range(9)]
-        # other_options = [f"option_{i}" for i in range(3)]
+        mocker.patch(
+            "src.grid.Grid._update_neighbour",
+            return_value=Cell()
+        )
 
         # Act
-        # intersection = list(set(options).intersection(set(other_options)))
-
-        # logger.debug(
-        #     "\nIntersection:     {}",
-        #     list(set(options) & set(other_options))
-        # )
-        # logger.debug(
-        #     "Difference [A-B]: {}",
-        #     list(set(options) - set(other_options))
-        # )
-        # logger.debug(
-        #     "Difference [B-A]: {}",
-        #     list(set(other_options) - set(options))
-        # )
-        # logger.debug(
-        #     "Union:            {}",
-        #     list(set(options) | set(other_options))
-        # )
-
-        # logger.debug(options)
-        # logger.debug(other_options)
+        result = grid._update_neighbours(collapsed_cell=collapsed_cell)
 
         # Assert
-        # assert len(intersection) == 4
-
-    @pytest.mark.skip("not implemented yet.")
-    def test__update_neighbours(self):
-        # Arrange
-
-        # Act
-
-        # Assert
-        assert False
+        assert len(result) == neibours
 
     @pytest.mark.skip("not implemented yet.")
     def test_update(self):

@@ -47,10 +47,10 @@ class Grid:
 
             for row_cell in self._cells:
                 for cell in row_cell:
-                    cell_state = cell.state
+                    state = cell.state
 
                     ax = fig.add_subplot(self._size, self._size, counter)
-                    # ax.set_title(cell_state)
+                    # ax.set_title(state)
 
                     if include_entropy:
                         plt.text(
@@ -61,7 +61,7 @@ class Grid:
                         )
 
                     plt.axis("off")
-                    plt.imshow(self._tileset.tile(cell_state))
+                    plt.imshow(self._tileset.tile(state))
 
                     counter = counter + 1
             # fig.tight_layout()
@@ -95,39 +95,73 @@ class Grid:
 
         return candidate
 
-    def _update_neighbours(self, collapsed_cell: Cell):
+    @logger.catch()
+    def _update_neighbours(self, collapsed_cell: Cell) -> list:
         """Update the options of the cells' neighbours.
 
         Args:
             cell (Cell): the cell to update
+
+        Return:
+            list: list of cells updated
         """
         row = collapsed_cell.row
         column = collapsed_cell.column
-        cell_state = collapsed_cell.state
+        state = collapsed_cell.state
+
+        updated_cells = []
 
         # update cell above
         if row > 0:
-            available_options = self._tileset.connection_rules[cell_state]["UP"]
-            neighbour: Cell = self._cells[row - 1, column]
-            neighbour.update_options(available_options)
+            neighbour = self._update_neighbour(
+                row=row - 1, column=column, state=state, direction="UP"
+            )
+            updated_cells.append(neighbour)
 
         # update cell below
         if row < self._size - 1:
-            available_options = self._tileset.connection_rules[cell_state]["DOWN"]
-            neighbour: Cell = self._cells[row + 1, column]
-            neighbour.update_options(available_options)
+            neighbour = self._update_neighbour(
+                row=row + 1, column=column, state=state, direction="DOWN"
+            )
+            updated_cells.append(neighbour)
 
         # update cell to the right
         if column < self._size - 1:
-            available_options = self._tileset.connection_rules[cell_state]["RIGHT"]
-            neighbour: Cell = self._cells[row, column + 1]
-            neighbour.update_options(available_options)
+            neighbour = self._update_neighbour(
+                row=row, column=column + 1, state=state, direction="RIGHT"
+            )
+            updated_cells.append(neighbour)
 
-        # update cell to the right
+        # update cell to the left
         if column > 0:
-            available_options = self._tileset.connection_rules[cell_state]["LEFT"]
-            neighbour: Cell = self._cells[row, column - 1]
-            neighbour.update_options(available_options)
+            neighbour = self._update_neighbour(
+                row=row, column=column - 1, state=state, direction="LEFT"
+            )
+            updated_cells.append(neighbour)
+
+        return updated_cells
+
+    def _update_neighbour(self, row: int, column: int, state: str, direction: str) -> Cell:
+        """Update a single neighbouring cell.
+
+        Args:
+            row (int): row position of the current cell
+            column (int): column position of the current cell
+            state (str): state of the current cell
+            direction (str): direction to find the neighbour
+
+        Returns:
+            Cell: the neighbouring cell
+        """
+        logger.debug(f"Checking cell {direction.lower()}.")
+        available_options = self._tileset.get_connection_rules(
+            state=state, direction=direction)
+        neighbour: Cell = self._cells[row, column]
+
+        logger.debug("Available Options: {}", available_options)
+        neighbour.update_options(available_options)
+
+        return neighbour
 
     def update(self):
         """Update grid's cells.
