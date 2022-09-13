@@ -188,9 +188,10 @@ class TestGrid:
         # Assert
         assert grid._collapsed_cells == collapsed_cells + 1
 
-    def test__populate_map(self, mocker):
+    @pytest.mark.repeat(3)
+    def test__populate_map(self, mocker, faker):
         # Arrange
-        size = 3
+        size = faker.random_digit_not_null()
         grid = Grid(size=size)
         expected = np.ndarray(shape=(size * 3, size * 3), dtype=float)
         expected.fill(0.)
@@ -206,8 +207,6 @@ class TestGrid:
 
         # Act
         map = grid._populate_map()
-
-        self.print_grid(grid)
 
         # Assert
         assert (map == expected).all()
