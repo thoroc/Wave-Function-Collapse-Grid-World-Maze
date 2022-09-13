@@ -64,45 +64,59 @@ class TestGrid:
         # Assert
         assert cell == grid._cells[row, column]
 
-    @pytest.mark.parametrize("row, column, neighbours", [
-        (0, 0, {"RIGHT": (0, 1), "DOWN": (1, 0)}),
-        (0, 1, {"LEFT": (0, 0), "RIGHT": (0, 2), "DOWN": (1, 1)}),
-        (0, 2, {"LEFT": (0, 0), "DOWN": (1, 1)}),
-        (1, 0, {"UP": (0, 1), "RIGHT": (1, 2), "DOWN": (2, 1)}),
-        (1, 1, {"LEFT": (1, 0), "UP": (0, 1), "RIGHT": (1, 2), "DOWN": (2, 1)}),
-        (1, 2, {"LEFT": (1, 0), "UP": (0, 1), "DOWN": (2, 1)}),
-        # (2, 0, 2),
-        # (2, 1, 3),
-        # (2, 2, 2),
-        # (-1, -1, 0),
-        # (-1, 4, 0),
-        # (4, -1, 0),
-        # (4, 4, 0)
-    ])
-    def test__update_neighbours(self, mocker, row, column, neighbours):
+    @pytest.mark.parametrize(
+        "row, column, neighbours",
+        [
+            (
+                0, 0,
+                {"RIGHT": (0, 1), "DOWN": (1, 0)}
+            ),
+            (
+                0, 1,
+                {"LEFT": (0, 0), "RIGHT": (0, 2), "DOWN": (1, 1)}
+            ),
+            (
+                0, 2,
+                {"LEFT": (0, 1), "DOWN": (1, 2)}
+            ),
+            (
+                1, 0,
+                {"UP": (0, 0), "RIGHT": (1, 1), "DOWN": (2, 0)}
+            ),
+            (
+                1, 1,
+                {"LEFT": (1, 0), "UP": (0, 1), "RIGHT": (1, 2), "DOWN": (2, 1)}
+            ),
+            (
+                1, 2,
+                {"LEFT": (1, 1), "UP": (0, 2), "DOWN": (2, 2)}
+            ),
+            (
+                2, 0,
+                {"UP": (1, 0), "RIGHT": (2, 1)}
+            ),
+            (
+                2, 1,
+                {"LEFT": (2, 0), "UP": (1, 1), "RIGHT": (2, 2)}
+            ),
+            (
+                2, 2,
+                {"LEFT": (2, 1), "UP": (1, 2)}
+            )
+        ])
+    def test__update_neighbours_in_range(self, row, column, neighbours):
         # Arrange
         grid = Grid(size=3)
         collapsed_cell: Cell = grid._cells[row, column]
         collapsed_cell._state = "Tile_0"
         logger.debug("Cell: {}", collapsed_cell)
 
-        # def side_effect(*args, **kwargs):
-        #     if kwargs["direction"] in ("UP", "DOWN", "LEFT", "RIGHT"):
-        #         n_row, n_column = neighbours[kwargs["direction"]]
-        #         return grid._cells[n_row][n_column]
-
-        # mocker.patch(
-        #     "src.grid.Grid._update_neighbour",
-        #     side_effect=side_effect
-        # )
         expected = {}
         for key, value in neighbours.items():
             expected[key] = grid._cells[value[0], value[1]]
 
             # Act
         result = grid._update_neighbours(collapsed_cell=collapsed_cell)
-
-        self.print_grid(grid, attribute="id")
 
         logger.debug("actual:   {}", result)
         logger.debug("expected: {}", expected)
