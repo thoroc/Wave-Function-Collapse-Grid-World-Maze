@@ -134,7 +134,36 @@ class TestGrid:
         # Assert
         assert False
 
-    @pytest.mark.skip("not implemented yet.")
+    @pytest.mark.repeat(3)
+    def test__update_neighbouring_cell(self, mocker, faker):
+        # Arrange
+        elements = [d for d in range(0, 10)]
+        row = faker.random_choices(elements=tuple(elements), length=1)[0]
+        column = faker.random_choices(elements=tuple(elements), length=1)[0]
+
+        grid = Grid(size=len(elements))
+        available_options = [faker.word()
+                             for _ in range(faker.random_digit_not_null())]
+
+        mocker.patch(
+            "src.tileset.Tileset.get_connection_rules",
+            return_value=available_options
+        )
+
+        mocker.patch(
+            "src.cell.Cell.update_options",
+            return_value=available_options
+        )
+        direction = faker.random_choices(
+            elements=("LEFT", "UP", "RIGHT", "DOWN"), length=1)[0]
+        # Act
+        actual = grid._update_neighbouring_cell(
+            row, column, faker.word(), direction)
+
+        # Assert
+        assert actual == grid._cells[row, column]
+
+    @ pytest.mark.skip("not implemented yet.")
     def test_update(self):
         # Arrange
 
@@ -143,7 +172,7 @@ class TestGrid:
         # Assert
         assert False
 
-    @pytest.mark.skip("not implemented yet.")
+    @ pytest.mark.skip("not implemented yet.")
     def test_generate_map(self):
         # Arrange
 
