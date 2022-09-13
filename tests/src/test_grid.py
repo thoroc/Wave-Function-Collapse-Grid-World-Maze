@@ -130,19 +130,19 @@ class TestGrid:
     def print_grid(self, grid: Grid):
         """Debug statement to check entropy for the whole cells group.
         """
-        entropies = []
+        data = []
 
         for column_index in range(grid._size):
             row = []
 
-            for row_index in range(grid._size):
-                curr_cell: Cell = grid._cells[row_index, column_index]
+            for row in range(grid._size):
+                curr_cell: Cell = grid._cells[row, column_index]
                 row.append(curr_cell.entropy)
 
-            entropies.append(row)
+            data.append(row)
 
         columns = [f"col_{i}" for i in range(grid._size)]
         index = [[f"row_{i}" for i in range(grid._size)]]
-        df = pd.DataFrame(entropies, columns=columns, index=index)
+        df = pd.DataFrame(data, columns=columns, index=index)
 
         logger.debug("\n{}", df)
