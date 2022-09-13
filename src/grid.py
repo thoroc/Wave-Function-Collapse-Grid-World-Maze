@@ -182,16 +182,15 @@ class Grid:
     def _populate_map(self) -> np.ndarray:
         map = np.ndarray(shape=(3 * self._size, 3 * self._size))
 
-        for row in range(self._size):
-            for column in range(self._size):
-                cell: Cell = self._cells[row][column]
-                cell_2d = self._tileset.get_tile(cell.state)
+        for cell in self._cells.flat:
+            cell: Cell = self._cells[cell.row][cell.column]
+            cell_2d = self._tileset.get_tile(cell.state)
 
-                for width in range(3):
-                    for height in range(3):
-                        pos_x = row * 3 + width
-                        pos_y = column * 3 + height
-                        map[pos_x][pos_y] = cell_2d[width][height]
+            for width in range(3):
+                for height in range(3):
+                    pos_x = cell.row * 3 + width
+                    pos_y = cell.column * 3 + height
+                    map[pos_x][pos_y] = cell_2d[width][height]
 
         return map
 
