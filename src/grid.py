@@ -176,7 +176,7 @@ class Grid:
         # Collapse the cell, select one state for it
         cell.update_state(method="random")
         # Propagate entropy to neighbours, change their available options
-        self._update_neighbours(cell.row, cell.column)
+        self._update_neighbours(cell)
         self._collapsed_cells = self._collapsed_cells + 1
 
     def generate_map(self, draw_stages=False):

@@ -28,22 +28,22 @@ class TestCell:
     def test_state(self, faker):
         # Arrange
         cell = Cell()
-        new_state = faker.word()
+        expected_state = faker.word()
 
         # Act
-        cell._state = new_state
+        cell._state = expected_state
 
         # Assert
-        assert cell.state == new_state
+        assert cell.state == expected_state
 
     @pytest.mark.repeat(3)
     def test_entropy(self, faker):
         # Arrange
         nb_options = faker.random_digit_not_null()
-        new_options = [faker.word() for _ in range(nb_options)]
+        options = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell = Cell(options=new_options)
+        cell = Cell(options=options)
 
         # Assert
         assert cell.entropy == nb_options
@@ -64,13 +64,13 @@ class TestCell:
     def test_options(self, faker):
         # Arrange
         nb_options = faker.random_digit_not_null()
-        new_options = [faker.word() for _ in range(nb_options)]
+        expected = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell = Cell(options=new_options)
+        cell = Cell(options=expected)
 
         # Assert
-        assert cell.options == new_options
+        assert cell.options == expected
 
     @pytest.mark.repeat(3)
     def test_row(self, faker):
@@ -106,15 +106,15 @@ class TestCell:
         )
 
         # Act
-        result = cell.update_state()
+        actual = cell.update_state()
 
         # Assert
-        assert result == "Tile_0"
+        assert actual == "Tile_0"
         assert [] == cell.options
         assert 0 == cell.entropy
         assert cell.collapsed is True
 
-    @pytest.mark.parametrize("new_state", [
+    @pytest.mark.parametrize("expected_state", [
         "Tile_0",
         "Tile_1",
         "Tile_2",
@@ -123,17 +123,17 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_collapsed(self, new_state, mocker):
+    def test_update_state_collapsed(self, expected_state, mocker):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
 
         # Act
         cell._collapsed = True
-        result = cell.update_state(new_state)
+        actual = cell.update_state(expected_state)
 
         # Assert
-        assert result == "Tile_10"
+        assert actual == "Tile_10"
         assert [
             "Tile_0",
             "Tile_1",
@@ -169,10 +169,10 @@ class TestCell:
         )
 
         # Act
-        result = cell.update_state(method="random")
+        actual = cell.update_state(method="random")
 
         # Assert
-        assert result == random_option
+        assert actual == random_option
         assert [] == cell.options
         assert 0 == cell.entropy
         assert cell.collapsed is True
@@ -273,27 +273,27 @@ class TestCell:
                    for _ in range(faker.random_digit_not_null())]
 
         # Act
-        current_options = cell._options
-        new_options = cell.update_options(remove_options=options)
+        expected_options = cell._options
+        actual = cell.update_options(keep_options=options)
 
         # Assert
-        assert new_options == current_options
+        assert actual == expected_options
 
-    @pytest.mark.parametrize("remove_options, expected_options", [
-        (["Tile_0"], ["Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
-        (["Tile_1"], ["Tile_0", "Tile_2", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
-        (["Tile_2"], ["Tile_0", "Tile_1", "Tile_3", "Tile_4", "Tile_5", "Tile_6"]),
-        (["Tile_3"], ["Tile_0", "Tile_1", "Tile_2", "Tile_4", "Tile_5", "Tile_6"]),
-        (["Tile_4"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_5", "Tile_6"]),
-        (["Tile_5"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_6"]),
-        (["Tile_6"], ["Tile_0", "Tile_1", "Tile_2", "Tile_3", "Tile_4", "Tile_5"])
+    @pytest.mark.parametrize("keep_options, expected_options", [
+        (["Tile_0"], ["Tile_0"]),
+        (["Tile_1"], ["Tile_1"]),
+        (["Tile_2"], ["Tile_2"]),
+        (["Tile_3"], ["Tile_3"]),
+        (["Tile_4"], ["Tile_4"]),
+        (["Tile_5"], ["Tile_5"]),
+        (["Tile_6"], ["Tile_6"]),
     ])
-    def test_update_options_valid(self, faker, remove_options, expected_options):
+    def test_update_options_valid(self, keep_options, expected_options):
         # Arrange
         cell = Cell()
 
         # Act
-        result = cell.update_options(remove_options=remove_options)
+        actual = cell.update_options(keep_options=keep_options)
 
         # Assert
-        assert result == expected_options
+        assert actual == expected_options

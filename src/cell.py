@@ -114,11 +114,11 @@ class Cell:
 
         return self._state
 
-    def update_options(self, remove_options: list) -> list:
+    def update_options(self, keep_options: list) -> list:
         """Update cell's options.
 
         Args:
-            remove_options (list): list of options to remove for the cell
+            keep_options (list): list of options to keep for the cell
 
         Return:
             list: the current options for the cell
@@ -127,12 +127,11 @@ class Cell:
             logger.debug("This cell [{}] is already collapsed. Skipping", self)
             return self._options
 
-        curr_options = self._options
-        self._options = sorted(list(
-            set(curr_options) - set(remove_options)
-        ))
-
-        # logger.debug("Cell [{}]. New options: {}", self, self._options)
+        remove_options = [
+            option for option in self._options.copy() if option not in keep_options
+        ]
+        for option in remove_options:
+            self._options.remove(option)
 
         return self._options
 
