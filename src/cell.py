@@ -75,8 +75,7 @@ class Cell:
         """Column property"""
         return self._column
 
-    @logger.catch()
-    def update_state(self, new_state="Tile_0", method="direct"):
+    def update_state(self, new_state="Tile_0", method="direct") -> str:
         """Update cell's state.
 
         Args:

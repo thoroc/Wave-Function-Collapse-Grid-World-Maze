@@ -163,16 +163,31 @@ class TestGrid:
         # Assert
         assert actual == grid._cells[row, column]
 
-    @ pytest.mark.skip("not implemented yet.")
-    def test_update(self):
+    @pytest.mark.repeat(3)
+    def test_update(self, mocker, faker):
         # Arrange
+        grid = Grid(size=3)
+        collapsed_cells = faker.random_digit()
+        grid._collapsed_cells = collapsed_cells
+
+        random_cell = faker.random_choices(
+            elements=tuple(grid._cells.flat), length=1)[0]
+
+        mocker.patch(
+            "src.grid.Grid._lowest_entropy",
+            return_value=random_cell
+        )
+
+        mocker.patch("src.cell.Cell.update_state")
+        mocker.patch("src.grid.Grid._update_neighbours")
 
         # Act
+        grid.update()
 
         # Assert
-        assert False
+        assert grid._collapsed_cells == collapsed_cells + 1
 
-    @ pytest.mark.skip("not implemented yet.")
+    @pytest.mark.skip("not implemented yet.")
     def test_generate_map(self):
         # Arrange
 

@@ -95,7 +95,6 @@ class Grid:
 
         return candidate
 
-    @logger.catch()
     def _update_neighbours(self, collapsed_cell: Cell) -> dict:
         """Update the options of the cells' neighbours.
 
