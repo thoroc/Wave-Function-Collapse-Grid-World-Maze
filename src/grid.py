@@ -96,48 +96,48 @@ class Grid:
         return candidate
 
     @logger.catch()
-    def _update_neighbours(self, collapsed_cell: Cell) -> list:
+    def _update_neighbours(self, collapsed_cell: Cell) -> dict:
         """Update the options of the cells' neighbours.
 
         Args:
             cell (Cell): the cell to update
 
         Return:
-            list: list of cells updated
+            dict: dict containing updated cells per direction
         """
         row = collapsed_cell.row
         column = collapsed_cell.column
         state = collapsed_cell.state
 
-        updated_cells = []
-
-        # update cell above
-        if row > 0:
-            neighbour = self._update_neighbour(
-                row=row - 1, column=column, state=state, direction="UP"
-            )
-            updated_cells.append(neighbour)
-
-        # update cell below
-        if row < self._size - 1:
-            neighbour = self._update_neighbour(
-                row=row + 1, column=column, state=state, direction="DOWN"
-            )
-            updated_cells.append(neighbour)
-
-        # update cell to the right
-        if column < self._size - 1:
-            neighbour = self._update_neighbour(
-                row=row, column=column + 1, state=state, direction="RIGHT"
-            )
-            updated_cells.append(neighbour)
+        updated_cells = {}
 
         # update cell to the left
         if column > 0:
             neighbour = self._update_neighbour(
                 row=row, column=column - 1, state=state, direction="LEFT"
             )
-            updated_cells.append(neighbour)
+            updated_cells["LEFT"] = neighbour
+
+        # update cell above
+        if row > 0:
+            neighbour = self._update_neighbour(
+                row=row - 1, column=column, state=state, direction="UP"
+            )
+            updated_cells["UP"] = neighbour
+
+        # update cell to the right
+        if column < self._size - 1:
+            neighbour = self._update_neighbour(
+                row=row, column=column + 1, state=state, direction="RIGHT"
+            )
+            updated_cells["RIGHT"] = neighbour
+
+        # update cell below
+        if row < self._size - 1:
+            neighbour = self._update_neighbour(
+                row=row + 1, column=column, state=state, direction="DOWN"
+            )
+            updated_cells["DOWN"] = neighbour
 
         return updated_cells
 
