@@ -25,6 +25,18 @@ class TestCell:
         assert cell.entropy == 7
 
     @pytest.mark.repeat(3)
+    def test_id(self, faker):
+        # Arrange
+        cell = Cell()
+        expected_id = faker.uuid4()
+
+        # Act
+        cell._id = expected_id
+
+        # Assert
+        assert cell.id == expected_id
+
+    @pytest.mark.repeat(3)
     def test_state(self, faker):
         # Arrange
         cell = Cell()
