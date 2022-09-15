@@ -5,7 +5,7 @@ from src.lib import tileset
 # tileset()
 
 grid = Grid(9)
-map = grid.generate_map()
+map = grid.generate_map(draw_stages=True)
 
 plt.title("Generated and Exported map")
 plt.axis('off')

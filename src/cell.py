@@ -1,3 +1,4 @@
+from uuid import uuid4
 import numpy as np
 from loguru import logger
 from src.tileset import Tileset
@@ -13,13 +14,18 @@ class Cell:
             10 means the state was not assigned yet
     """
 
+    _id: str
     _collapsed: bool
     _state: str
     _entropy: int
+    _row: int
+    _column: int
 
-    def __init__(self):
+    def __init__(self, options=None, row=None, column=None):
         """Class Cell constructor."""
-        self._options = [
+        self._id = uuid4()
+
+        self._options = options if options else [
             "Tile_0",
             "Tile_1",
             "Tile_2",
@@ -31,6 +37,12 @@ class Cell:
         self._collapsed = False
         self._state = "Tile_10"
         self._entropy = len(self._options)
+        self._row = row
+        self._column = column
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def state(self):
@@ -53,12 +65,25 @@ class Cell:
         """Options property."""
         return self._options
 
-    def update_state(self, new_state="Tile_0", method="direct"):
+    @property
+    def row(self):
+        """Row property"""
+        return self._row
+
+    @property
+    def column(self):
+        """Column property"""
+        return self._column
+
+    def update_state(self, new_state="Tile_0", method="direct") -> str:
         """Update cell's state.
 
         Args:
             new_state (str, optional): state. Defaults to "Tile_0".
             method (str, optional): method. Defaults to "direct".
+
+        Returns:
+            str: the cell's state
         """
         if self._collapsed:
             logger.debug("The cell is already collapsed!")
@@ -88,3 +113,30 @@ class Cell:
         self._collapsed = True
 
         return self._state
+
+    def update_options(self, keep_options: list) -> list:
+        """Update cell's options.
+
+        Args:
+            keep_options (list): list of options to keep for the cell
+
+        Return:
+            list: the current options for the cell
+        """
+        if self._collapsed:
+            logger.debug("This cell [{}] is already collapsed. Skipping", self)
+            return self._options
+
+        remove_options = [
+            option for option in self._options.copy() if option not in keep_options
+        ]
+        for option in remove_options:
+            self._options.remove(option)
+
+        return self._options
+
+    def __repr__(self) -> str:
+        return f"<{__name__}.{__class__.__name__} id={self._id} row={self._row} column={self._column} collapsed={self._collapsed} state={self._state} entropy={self._entropy}>"
+
+    def __eq__(self, cell: object) -> bool:
+        return self._id == cell.id

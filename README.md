@@ -23,8 +23,12 @@ Use `poetry`.
 
 ## Testing
 
-`pytest . -x -vvv -s -o log_cli=true`
+`poetry run pytest`
 
 ## Check code
 
 `python -m vulture main.py src`
+
+## Check the code again
+
+`poetry run bandit -c pyproject.toml -r .`

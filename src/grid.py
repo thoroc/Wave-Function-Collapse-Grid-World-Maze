@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 from loguru import logger
@@ -9,21 +10,23 @@ class Grid:
     """Class Grid."""
 
     _size: int
-    _tiles: Tileset
+    _tileset: Tileset
     _cells: np.ndarray
     _collapsed_cells: int
     _map: np.ndarray
 
     def __init__(self, size: int):
         self._size = size
-        self._tiles = Tileset()
+        self._tileset = Tileset()
         self._cells = np.ndarray(shape=(size, size), dtype=Cell)
         self._collapsed_cells = 0
         self._map = np.zeros(shape=(3 * size, 3 * size))
 
-        for row in range(size):
-            for column in range(size):
-                self._cells[row][column] = Cell()
+        for row_index in range(size):
+            for column_index in range(size):
+                self._cells[row_index, column_index] = Cell(
+                    row=row_index, column=column_index
+                )
 
     def draw_board(self, include_entropy=False, tiles="separate", title=""):
         """Draw board.
@@ -44,10 +47,10 @@ class Grid:
 
             for row_cell in self._cells:
                 for cell in row_cell:
-                    cell_state = cell.state
+                    state = cell.state
 
                     ax = fig.add_subplot(self._size, self._size, counter)
-                    # ax.set_title(cell_state)
+                    # ax.set_title(state)
 
                     if include_entropy:
                         plt.text(
@@ -58,7 +61,7 @@ class Grid:
                         )
 
                     plt.axis("off")
-                    plt.imshow(self._tiles.tile(cell_state))
+                    plt.imshow(self._tileset.get_tile(state))
 
                     counter = counter + 1
             # fig.tight_layout()
@@ -72,115 +75,126 @@ class Grid:
         else:
             logger.debug("error. Wrong tiles value was given!")
 
-    def lowest_entropy(self) -> Cell:
+    def _lowest_entropy(self) -> Cell:
         """Returns the cell with the lowest entropy.
 
         Returns:
             Cell: the cell found
         """
-        lowest_entropy = 7
-        lowest_entropy_index = [0, 0]
-        # previousCellCollapse = self._cells[0][0].isCollapsed()
+        _lowest_entropy = 7
+        candidate = self._cells[0, 0]
 
-        for row in range(self._size):
-            for column in range(self._size):
-                cell: Cell = self._cells[row][column]
-                if not cell.collapsed and cell.entropy < lowest_entropy:
-                    lowest_entropy = cell.entropy
-                    lowest_entropy_index = [row, column]
+        for cell in self._cells.flat:
 
-        logger.debug("Cell with lowest entropy: {}", lowest_entropy_index)
-        logger.debug("Is the cell collapsed? {}",
-                     self._cells[lowest_entropy_index[0]][lowest_entropy_index[1]].collapsed)
+            if not cell.collapsed and cell.entropy < _lowest_entropy:
+                candidate = cell
+                _lowest_entropy = cell.entropy
 
-        return lowest_entropy_index
+        logger.debug(
+            "The cell with the lowest entropy: {}", candidate)
 
-    def update_cell_options(self, cell_index: tuple, available_options: list):
-        """Update cell's options.
+        return candidate
+
+    def _update_neighbours(self, collapsed_cell: Cell) -> dict:
+        """Update the options of the cells' neighbours.
 
         Args:
-            cell_index (tuple): index where to find the cell
-            available_options (list): new list of options for the cell
+            cell (Cell): the cell to update
 
         Return:
-            None
+            dict: dict containing updated cells per direction
         """
-        row, column = cell_index
-        current_cell: Cell = self._cells[row][column]
-        logger.debug("Available options: {}", available_options)
-        logger.debug("My options: {}", current_cell.options)
+        row = collapsed_cell.row
+        column = collapsed_cell.column
+        state = collapsed_cell.state
+        lower_bound = 0
+        upper_bound = self._size - 1
 
-        if current_cell.collapsed:
-            logger.debug("This cell is already collapsed")
-            return
+        updated_cells = {}
 
-        copy_options = current_cell.options.copy()
-        for option in copy_options:
-            if option in available_options:
-                continue
-
-            logger.debug("I deleted an option: {}", option)
-            current_cell.options.remove(option)
-
-        logger.debug("Cell [{}][{}]. My new options: {}",
-                     row, column, current_cell.options)
-
-    def update_options_of_others(self, cell_index: tuple):
-        """Update the other cells' options.
-
-        Args:
-            cell_index (tuple): index where to find the cell of which neighbours
-                                should be updated
-        """
-        row, column = cell_index
-        collapsed_cell: Cell = self._cells[row][column]
-        cell_state = collapsed_cell.state
+        # update cell to the left
+        if column > lower_bound:
+            neighbour = self._update_neighbouring_cell(
+                row=row, column=column - 1, state=state, direction="LEFT"
+            )
+            updated_cells["LEFT"] = neighbour
 
         # update cell above
-        if row > 0:
-            available_options = self._tiles.connection_rules[cell_state]["UP"]
-            self.update_cell_options([row - 1, column], available_options)
+        if row > lower_bound:
+            neighbour = self._update_neighbouring_cell(
+                row=row - 1, column=column, state=state, direction="UP"
+            )
+            updated_cells["UP"] = neighbour
+
+        # update cell to the right
+        if column < upper_bound:
+            neighbour = self._update_neighbouring_cell(
+                row=row, column=column + 1, state=state, direction="RIGHT"
+            )
+            updated_cells["RIGHT"] = neighbour
 
         # update cell below
-        if row < self._size - 1:
-            available_options = self._tiles.connection_rules[cell_state]["DOWN"]
-            self.update_cell_options([row + 1, column], available_options)
+        if row < upper_bound:
+            neighbour = self._update_neighbouring_cell(
+                row=row + 1, column=column, state=state, direction="DOWN"
+            )
+            updated_cells["DOWN"] = neighbour
 
-        # update cell to the right
-        if column < self._size - 1:
-            available_options = self._tiles.connection_rules[cell_state]["RIGHT"]
-            self.update_cell_options([row, column + 1], available_options)
+        return updated_cells
 
-        # update cell to the right
-        if column > 0:
-            available_options = self._tiles.connection_rules[cell_state]["LEFT"]
-            self.update_cell_options([row, column - 1], available_options)
-
-    def collapse_cell(self, cell_index: tuple):
-        """Collapse cell at index.
+    def _update_neighbouring_cell(self, row: int, column: int, state: str, direction: str) -> Cell:
+        """Update a single neighbouring cell.
 
         Args:
-            cell_index (tuple): index where to find the cell
-        """
-        row, column = cell_index
-        current_cell: Cell = self._cells[row][column]
-        current_cell.update_state(method="random")
+            row (int): row position of the current cell
+            column (int): column position of the current cell
+            state (str): state of the current cell
+            direction (str): direction to find the neighbour
 
-    def update(self):
+        Returns:
+            Cell: the neighbouring cell
+        """
+        # logger.debug(f"Checking cell {direction.lower()}.")
+        available_options = self._tileset.get_connection_rules(
+            state=state, direction=direction
+        )
+        neighbour: Cell = self._cells[row, column]
+
+        # logger.debug("Available Options: {}", available_options)
+        neighbour.update_options(available_options)
+
+        return neighbour
+
+    def _update(self) -> None:
         """Update grid's cells.
 
         Collapse one cell with the lowest entropy and changes available options
         of neighbours (makes update according to assigned state).
         """
         # Chose the cell with lowest entropy
-        index = self.lowest_entropy()
+        cell = self._lowest_entropy()
         # Collapse the cell, select one state for it
-        self.collapse_cell(index)
+        cell.update_state(method="random")
         # Propagate entropy to neighbours, change their available options
-        self.update_options_of_others(index)
+        self._update_neighbours(cell)
         self._collapsed_cells = self._collapsed_cells + 1
 
-    def generate_map(self, draw_stages=False):
+    def _populate_map(self) -> np.ndarray:
+        map = np.ndarray(shape=(3 * self._size, 3 * self._size))
+
+        for cell in self._cells.flat:
+            cell: Cell = self._cells[cell.row][cell.column]
+            cell_2d = self._tileset.get_tile(cell.state)
+
+            for width in range(3):
+                for height in range(3):
+                    pos_x = cell.row * 3 + width
+                    pos_y = cell.column * 3 + height
+                    map[pos_x][pos_y] = cell_2d[width][height]
+
+        return map
+
+    def generate_map(self, draw_stages=False) -> np.ndarray:
         """Generate map.
 
         Args:
@@ -193,28 +207,23 @@ class Grid:
         percent_threshold = 10
 
         while self._collapsed_cells < max_number_collapsed_cells:
-            self.update()
+            self._update()
             percent = 100 * self._collapsed_cells / max_number_collapsed_cells
 
             if percent > percent_threshold or percent == 100:
 
                 logger.debug(f"The map is generated by {percent:.1f}%")
                 if draw_stages:
-                    self.draw_board(include_entropy=True,
-                                    title=percent_threshold)
+                    self.draw_board(
+                        include_entropy=True,
+                        title=percent_threshold
+                    )
                 percent_threshold = percent_threshold + 10
 
         # Fill 2D array to save the whole map
-        for row in range(self._size):
-            for column in range(self._size):
-                cell = self._cells[row][column]
-                state = cell.state
-                cell_2d = self._tiles.tiles[state]
-
-                for width in range(3):
-                    for height in range(3):
-                        pos_x = row * 3 + width
-                        pos_y = column * 3 + height
-                        self._map[pos_x][pos_y] = cell_2d[width][height]
+        self._map = self._populate_map()
 
         return self._map
+
+    def __repr__(self) -> str:
+        return f"<src.grid.Grid size={self._size} cells={list(self._cells)}>"

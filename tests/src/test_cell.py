@@ -25,25 +25,37 @@ class TestCell:
         assert cell.entropy == 7
 
     @pytest.mark.repeat(3)
+    def test_id(self, faker):
+        # Arrange
+        cell = Cell()
+        expected_id = faker.uuid4()
+
+        # Act
+        cell._id = expected_id
+
+        # Assert
+        assert cell.id == expected_id
+
+    @pytest.mark.repeat(3)
     def test_state(self, faker):
         # Arrange
         cell = Cell()
-        new_state = faker.word()
+        expected_state = faker.word()
 
         # Act
-        cell._state = new_state
+        cell._state = expected_state
 
         # Assert
-        assert cell.state == new_state
+        assert cell.state == expected_state
 
     @pytest.mark.repeat(3)
     def test_entropy(self, faker):
         # Arrange
-        cell = Cell()
         nb_options = faker.random_digit_not_null()
+        options = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell._options = [faker.word() for _ in range(nb_options)]
+        cell = Cell(options=options)
 
         # Assert
         assert cell.entropy == nb_options
@@ -63,35 +75,58 @@ class TestCell:
     @pytest.mark.repeat(3)
     def test_options(self, faker):
         # Arrange
-        cell = Cell()
         nb_options = faker.random_digit_not_null()
-        new_options = [faker.word() for _ in range(nb_options)]
+        expected = [faker.word() for _ in range(nb_options)]
 
         # Act
-        cell._options = new_options
+        cell = Cell(options=expected)
 
         # Assert
-        assert cell.options == new_options
+        assert cell.options == expected
 
-    def test_update_state_default(self, mocker, tileset_tile_list):
+    @pytest.mark.repeat(3)
+    def test_row(self, faker):
+        # Arrange
+        row_index = faker.random_digit()
+
+        # Act
+        cell = Cell(row=row_index)
+
+        # Assert
+        assert cell.row == row_index
+        assert cell.column is None
+
+    @pytest.mark.repeat(3)
+    def test_column(self, faker):
+        # Arrange
+        column_index = faker.random_digit()
+
+        # Act
+        cell = Cell(column=column_index)
+
+        # Assert
+        assert cell.row is None
+        assert cell.column == column_index
+
+    def test_update_state_default(self, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
-        result = cell.update_state()
+        actual = cell.update_state()
 
         # Assert
-        assert result == "Tile_0"
+        assert actual == "Tile_0"
         assert [] == cell.options
         assert 0 == cell.entropy
         assert cell.collapsed is True
 
-    @pytest.mark.parametrize("new_state", [
+    @pytest.mark.parametrize("expected_state", [
         "Tile_0",
         "Tile_1",
         "Tile_2",
@@ -100,17 +135,17 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_collapsed(self, new_state, mocker):
+    def test_update_state_collapsed(self, expected_state, mocker):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
 
         # Act
         cell._collapsed = True
-        result = cell.update_state(new_state)
+        actual = cell.update_state(expected_state)
 
         # Assert
-        assert result == "Tile_10"
+        assert actual == "Tile_10"
         assert [
             "Tile_0",
             "Tile_1",
@@ -133,7 +168,7 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_random(self, mocker, random_option, tileset_tile_list):
+    def test_update_state_random(self, mocker, random_option, complete_tile_list):
         # Arrange
         cell = Cell()
         choice = mocker.patch("numpy.random.choice")
@@ -142,14 +177,14 @@ class TestCell:
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
-        result = cell.update_state(method="random")
+        actual = cell.update_state(method="random")
 
         # Assert
-        assert result == random_option
+        assert actual == random_option
         assert [] == cell.options
         assert 0 == cell.entropy
         assert cell.collapsed is True
@@ -164,13 +199,13 @@ class TestCell:
         "Tile_5",
         "Tile_6"
     ])
-    def test_update_state_new_state(self, new_state, mocker, tileset_tile_list):
+    def test_update_state_new_state(self, new_state, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -191,13 +226,13 @@ class TestCell:
         (5, "Tile_5"),
         (6, "Tile_6"),
     ])
-    def test_update_state_int_ok(self, state_index, new_state, mocker, tileset_tile_list):
+    def test_update_state_int_ok(self, state_index, new_state, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -209,14 +244,14 @@ class TestCell:
     @pytest.mark.parametrize("state_index", [
         -1, 7
     ])
-    def test_update_state_int_out_of_bound(self, state_index, mocker, tileset_tile_list):
+    def test_update_state_int_out_of_bound(self, state_index, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -226,14 +261,14 @@ class TestCell:
         logger.assert_called()
 
     @pytest.mark.repeat(3)
-    def test_update_state_wrong_state(self, faker, mocker, tileset_tile_list):
+    def test_update_state_wrong_state(self, faker, mocker, complete_tile_list):
         # Arrange
         cell = Cell()
         logger = mocker.patch("loguru.logger.debug")
         mocker.patch(
             "src.cell.Tileset.tile_list",
             new_callable=mocker.PropertyMock,
-            return_value=tileset_tile_list
+            return_value=complete_tile_list
         )
 
         # Act
@@ -241,3 +276,36 @@ class TestCell:
 
         # Assert
         logger.assert_called()
+
+    def test_update_options_collapsed(self, faker):
+        # Arrange
+        cell = Cell()
+        cell._collapsed = True
+        options = [faker.word()
+                   for _ in range(faker.random_digit_not_null())]
+
+        # Act
+        expected_options = cell._options
+        actual = cell.update_options(keep_options=options)
+
+        # Assert
+        assert actual == expected_options
+
+    @pytest.mark.parametrize("keep_options, expected_options", [
+        (["Tile_0"], ["Tile_0"]),
+        (["Tile_1"], ["Tile_1"]),
+        (["Tile_2"], ["Tile_2"]),
+        (["Tile_3"], ["Tile_3"]),
+        (["Tile_4"], ["Tile_4"]),
+        (["Tile_5"], ["Tile_5"]),
+        (["Tile_6"], ["Tile_6"]),
+    ])
+    def test_update_options_valid(self, keep_options, expected_options):
+        # Arrange
+        cell = Cell()
+
+        # Act
+        actual = cell.update_options(keep_options=keep_options)
+
+        # Assert
+        assert actual == expected_options

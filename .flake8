@@ -1,7 +1,7 @@
 [flake8]
 line-length = 120
 select = B,C,E,F,W,T4,B9
-ignore = D203, E203, E266, E501, W503, F403, F401
+ignore = D203, E203, E266, E501, W503, F403, F401, C416
 exclude =
     # No need to traverse our git directory
     .git,
