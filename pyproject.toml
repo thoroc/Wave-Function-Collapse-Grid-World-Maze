@@ -16,7 +16,7 @@ pandas = "^1.4.4"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.7.0"
-coverage = "^6.4.4"
+coverage = "^6.5.0"
 coverage-threshold = "^0.4.4"
 flake8 = "^5.0.4"
 Faker = "^14.2.0"
